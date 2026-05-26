@@ -1,0 +1,24 @@
+{% extends "storefront/base.html" %}
+{% block title %}{{ campaign.title }} · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>{{ campaign.title }}</h1>
+  {% if campaign.beneficiary %}<p class="subtitle">Supporting {{ campaign.beneficiary }}</p>{% endif %}
+</div>
+<section class="section">
+  <div class="container-narrow">
+    {% if campaign.image %}<img src="{{ campaign.image.url }}" alt="{{ campaign.title }}" class="content-img-full" width="800" height="450">{% endif %}
+    <div class="progress-bar-bg progress-bar-lg">
+      <div class="progress-bar-fill" style="width: {{ campaign.percent_raised }}%;"></div>
+    </div>
+    <div class="fundraising-stats">
+      <span><strong class="fundraising-raised-amount">${{ campaign.raised_amount }}</strong> raised of ${{ campaign.goal_amount }}</span>
+      <span class="fundraising-funded">{{ campaign.percent_raised }}% funded</span>
+    </div>
+    <div class="content-body">{{ campaign.description }}</div>
+    {% if campaign.story %}
+    <div class="content-body content-body-preline">{{ campaign.story }}</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

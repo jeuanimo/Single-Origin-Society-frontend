@@ -1,0 +1,49 @@
+<header class="site-header">
+  <div class="header-top">Complimentary shipping on orders over $75 · Roasted to order</div>
+  <div class="header-main">
+    <a href="{% url 'storefront:home' %}" class="logo">Single Origin <span>Society</span></a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="{% url 'storefront:home' %}">Home</a>
+      <a href="{% url 'storefront:shop' %}">Shop</a>
+      <a href="{% url 'storefront:ritual' %}">Ritual</a>
+      <a href="{% url 'storefront:brewing_guides' %}">Brewing Guides</a>
+      <a href="{% url 'storefront:ritual_journal' %}">Ritual Journal</a>
+      <a href="{% url 'storefront:fundraising' %}">Fundraising</a>
+      <a href="{% url 'storefront:about' %}">About</a>
+      <a href="{% url 'storefront:contact' %}">Contact</a>
+    </nav>
+    <div class="header-actions">
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">Account</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Sign In</a>
+      {% endif %}
+      <a href="{% url 'storefront:cart' %}">Cart{% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}</a>
+    </div>
+  </div>
+  <details class="mobile-nav">
+    <summary>Browse</summary>
+    <nav class="mobile-nav-links" aria-label="Mobile">
+      {% if user.is_authenticated %}
+      <a href="{% url 'accounts:profile' %}">Account</a>
+      <a href="{% url 'accounts:logout' %}">Logout</a>
+      {% else %}
+      <a href="{% url 'accounts:login' %}">Sign In</a>
+      {% endif %}
+      <a href="{% url 'storefront:cart' %}">Cart{% if cart_count %} ({{ cart_count }}){% endif %}</a>
+      <a href="{% url 'storefront:shop' %}">Shop</a>
+      <a href="{% url 'storefront:coffee' %}">Coffee</a>
+      <a href="{% url 'storefront:tea' %}">Tea</a>
+      <a href="{% url 'storefront:gift_sets' %}">Gift Sets</a>
+      <a href="{% url 'storefront:accessories' %}">Accessories</a>
+      <a href="{% url 'storefront:drinkware' %}">Drinkware</a>
+      <a href="{% url 'storefront:brewing_guides' %}">Brewing Guides</a>
+      <a href="{% url 'storefront:tasting_notes' %}">Tasting Notes</a>
+      <a href="{% url 'storefront:ritual_journal' %}">Journal</a>
+      <a href="{% url 'storefront:fundraising' %}">Fundraising</a>
+      <a href="{% url 'storefront:about' %}">About</a>
+      <a href="{% url 'storefront:contact' %}">Contact</a>
+    </nav>
+  </details>
+</header>

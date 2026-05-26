@@ -1,0 +1,353 @@
+{% extends "storefront/base.html" %}
+{% load static content_blocks %}
+{% block title %}Single Origin Society · Quiet Luxury Coffee & Tea{% endblock title %}
+{% block meta_description %}{% if promo_blocks and promo_blocks.0.meta_description %}{{ promo_blocks.0.meta_description }}{% else %}Single Origin Society — luxury coffee and tea collections, rituals, tasting notes, brewing guides, and impact-driven campaigns.{% endif %}{% endblock meta_description %}
+{% block og_title %}{% if promo_blocks and promo_blocks.0.meta_title %}{{ promo_blocks.0.meta_title }}{% else %}Single Origin Society · Quiet Luxury Coffee & Tea{% endif %}{% endblock og_title %}
+{% block og_description %}{% if promo_blocks and promo_blocks.0.meta_description %}{{ promo_blocks.0.meta_description }}{% else %}Discover premium coffee and tea, shop by ritual, and explore editorial guides and journal stories.{% endif %}{% endblock og_description %}
+{% block content %}
+<section class="hero">
+  <div class="hero-main-image-wrap animate-fade-in-up">
+    <img src="{% static 'images/sos.jpg' %}" alt="Single Origin Society" class="hero-main-image" width="620" height="620">
+  </div>
+  {% render_block "home" "hero_text" as hero_text %}{% if hero_text %}{{ hero_text }}{% else %}
+  <h1 class="animate-fade-in-up">The Art of Single Origin</h1>
+  <p class="animate-fade-in-up-delay">Thoughtfully sourced, carefully roasted, and delivered to your door. Experience coffee and tea as it was meant to be — pure, intentional, and unforgettable.</p>
+  {% endif %}
+  <div class="animate-fade-in-up-delay-2">
+    <a href="{% url 'storefront:shop' %}" class="btn btn-gold">Explore the Collection</a>
+    <a href="{% url 'storefront:about' %}" class="btn btn-outline btn-spaced">Our Story</a>
+  </div>
+</section>
+
+{% if promo_blocks %}
+<section class="section">
+  <div class="container">
+    <div class="promo-grid-home">
+      {% for block in promo_blocks|slice:":3" %}
+      <article class="promo-card-home {% if block.tone == 'dark' %}promo-card-home-dark{% endif %}">
+        {% if block.image %}
+        <div class="promo-card-home-image img-reveal">
+          <img src="{{ block.image.url }}" alt="{{ block.title }}" width="640" height="420">
+        </div>
+        {% endif %}
+        <div class="promo-card-home-body">
+          <h3>{{ block.title }}</h3>
+          {% if block.subtitle %}<p class="promo-card-home-subtitle">{{ block.subtitle }}</p>{% endif %}
+          {% if block.body %}<p class="promo-card-home-text">{{ block.body }}</p>{% endif %}
+          {% if block.cta_label and block.cta_url %}<a class="btn btn-outline" href="{{ block.cta_url }}">{{ block.cta_label }}</a>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if featured_coffee %}
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-header">
+      <h2>Featured Coffee Collection</h2>
+      <div class="divider"></div>
+      <p>Single origin expressions</p>
+    </div>
+    <div class="product-grid">
+      {% for product in featured_coffee %}
+      <a href="{{ product.get_absolute_url }}" class="product-card">
+        <div class="product-card-image">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="420" height="420">
+          {% else %}
+          <span class="product-no-image">{{ product.name }}</span>
+          {% endif %}
+        </div>
+        <div class="product-card-body">
+          {% if product.origin %}<div class="origin">{{ product.origin }}</div>{% endif %}
+          <h3>{{ product.name }}</h3>
+          <div class="price">${{ product.price }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:coffee' %}" class="btn btn-dark">Shop Coffee</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if featured_tea %}
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header">
+      <h2>Featured Tea Collection</h2>
+      <div class="divider"></div>
+      <p>Elegant infusions and calming blends</p>
+    </div>
+    <div class="product-grid">
+      {% for product in featured_tea %}
+      <a href="{{ product.get_absolute_url }}" class="product-card">
+        <div class="product-card-image">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="420" height="420">
+          {% else %}
+          <span class="product-no-image">{{ product.name }}</span>
+          {% endif %}
+        </div>
+        <div class="product-card-body">
+          {% if product.origin %}<div class="origin">{{ product.origin }}</div>{% endif %}
+          <h3>{{ product.name }}</h3>
+          <div class="price">${{ product.price }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:tea' %}" class="btn btn-outline">Shop Tea</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>Shop by Ritual</h2>
+      <div class="divider"></div>
+      <p>Build your daily rhythm</p>
+    </div>
+    <div class="guide-method-sections">
+      <article class="guide-method-block">
+        <h3>Morning Clarity</h3>
+        <a class="guide-method-link" href="{% url 'storefront:coffee' %}">Bright coffees and pour-over rituals</a>
+        <a class="guide-method-link" href="{% url 'storefront:brewing_guides' %}?guide_type=pour_over">Pour-over guides</a>
+      </article>
+      <article class="guide-method-block">
+        <h3>Afternoon Focus</h3>
+        <a class="guide-method-link" href="{% url 'storefront:tea' %}">Balanced teas for a steady pace</a>
+        <a class="guide-method-link" href="{% url 'storefront:tasting_notes' %}">Explore tasting notes</a>
+      </article>
+      <article class="guide-method-block">
+        <h3>Evening Wind Down</h3>
+        <a class="guide-method-link" href="{% url 'storefront:ritual' %}">Ritual routines and calm moments</a>
+        <a class="guide-method-link" href="{% url 'storefront:ritual_journal' %}">Read the ritual journal</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header">
+      <h2>Brand Story</h2>
+      <div class="divider"></div>
+      <p>Quiet luxury, intentional sourcing</p>
+    </div>
+    <div class="promise-grid">
+      <div>
+        <h3 class="promise-title">Direct Trade</h3>
+        <p class="promise-text">We work directly with farmers, ensuring fair prices and exceptional quality from origin to cup.</p>
+      </div>
+      <div>
+        <h3 class="promise-title">Small Batch</h3>
+        <p class="promise-text">Every roast is crafted in small batches to preserve the unique character of each origin.</p>
+      </div>
+      <div>
+        <h3 class="promise-title">Ritual First</h3>
+        <p class="promise-text">We believe in the daily ritual — the quiet moment where intention meets craft.</p>
+      </div>
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:about' %}" class="btn btn-outline">Read Our Story</a>
+    </div>
+  </div>
+</section>
+
+{% if gift_sets %}
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-header">
+      <h2>Gift Sets</h2>
+      <div class="divider"></div>
+      <p>Curated for meaningful giving</p>
+    </div>
+    <div class="product-grid">
+      {% for product in gift_sets %}
+      <a href="{{ product.get_absolute_url }}" class="product-card">
+        <div class="product-card-image">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="420" height="420">
+          {% else %}
+          <span class="product-no-image">{{ product.name }}</span>
+          {% endif %}
+        </div>
+        <div class="product-card-body">
+          <h3>{{ product.name }}</h3>
+          <div class="price">${{ product.price }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:gift_sets' %}" class="btn btn-dark">Shop Gift Sets</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if tasting_preview %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Tasting Notes Preview</h2>
+      <div class="divider"></div>
+      <p>Sensory guidance for every cup</p>
+    </div>
+    <div class="guide-method-sections">
+      {% for note in tasting_preview %}
+      <article class="guide-method-block">
+        <h3>{{ note.title }}</h3>
+        <p class="guide-card-desc">{{ note.body|truncatewords:26 }}</p>
+        <p class="journal-entry-meta">{{ note.product.name }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:tasting_notes' %}" class="btn btn-outline">View Tasting Notes</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if guides_preview %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>Brewing Guides Preview</h2>
+      <div class="divider"></div>
+      <p>Master technique, one ritual at a time</p>
+    </div>
+    <div class="guide-method-sections">
+      {% for guide in guides_preview %}
+      <article class="guide-method-block">
+        <h3>{{ guide.title }}</h3>
+        <p class="guide-card-desc">{{ guide.description|truncatewords:24 }}</p>
+        <a class="guide-method-link" href="{% url 'storefront:brewing_guide_detail' guide.slug %}">Read Guide</a>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:brewing_guides' %}" class="btn btn-dark">Explore Brewing Guides</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if fundraising_feature %}
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-header">
+      <h2>Fundraising Feature</h2>
+      <div class="divider"></div>
+      <p>Shop with impact</p>
+    </div>
+    <a href="{% url 'storefront:fundraising_detail' fundraising_feature.slug %}" class="campaign-card fundraising-feature-card">
+      <div class="campaign-card-body">
+        <h3 class="campaign-card-title">{{ fundraising_feature.title }}</h3>
+        <p class="campaign-card-desc">{{ fundraising_feature.description|truncatewords:28 }}</p>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width: {{ fundraising_feature.percent_raised }}%;"></div>
+        </div>
+        <div class="campaign-card-stats">
+          <span>${{ fundraising_feature.raised_amount }} raised</span>
+          <span>{{ fundraising_feature.percent_raised }}% of ${{ fundraising_feature.goal_amount }}</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+{% endif %}
+
+{% if journal_preview %}
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header">
+      <h2>Ritual Journal Preview</h2>
+      <div class="divider"></div>
+      <p>Reflections, routines, and seasonal notes</p>
+    </div>
+    <div class="guide-method-sections">
+      {% for post in journal_preview %}
+      <article class="guide-method-block">
+        <h3>{{ post.title }}</h3>
+        <p class="guide-card-desc">{{ post.excerpt|default:post.body|truncatewords:24 }}</p>
+        <a class="guide-method-link" href="{% url 'storefront:ritual_journal_detail' post.slug %}">Read Entry</a>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="cta-center p-mt-24">
+      <a href="{% url 'storefront:ritual_journal' %}" class="btn btn-outline">View Journal</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container container-narrow">
+    <div class="section-header">
+      <h2>Newsletter Signup</h2>
+      <div class="divider"></div>
+      <p>Early access to releases and rituals</p>
+    </div>
+    <form method="post" action="{% url 'storefront:newsletter_subscribe' %}" class="newsletter-form-home">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="homepage">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <input type="hidden" name="ref" value="{{ referral_placeholder }}">
+      <input type="hidden" name="utm_source" value="{{ utm_source_placeholder }}">
+      <input type="hidden" name="utm_medium" value="{{ utm_medium_placeholder }}">
+      <input type="hidden" name="utm_campaign" value="{{ utm_campaign_placeholder }}">
+      <input type="hidden" name="landing_path" value="{{ landing_path_placeholder }}">
+      <label for="id_newsletter_email" class="sr-only">Email address</label>
+      <input id="id_newsletter_email" type="email" name="email" class="form-control" placeholder="you@example.com" required>
+      <button type="submit" class="btn btn-gold">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+{% if campaigns and not fundraising_feature %}
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-header">
+      <h2>Give Back</h2>
+      <div class="divider"></div>
+      <p>Current fundraising campaigns</p>
+    </div>
+    <div class="product-grid">
+      {% for campaign in campaigns %}
+      <a href="{% url 'storefront:fundraising_detail' campaign.slug %}" class="campaign-card">
+        <div class="campaign-card-body">
+          <h3 class="campaign-card-title">{{ campaign.title }}</h3>
+          <p class="campaign-card-desc">{{ campaign.description|truncatewords:20 }}</p>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: {{ campaign.percent_raised }}%;"></div>
+          </div>
+          <div class="campaign-card-stats">
+            <span>${{ campaign.raised_amount }} raised</span>
+            <span>{{ campaign.percent_raised }}% of ${{ campaign.goal_amount }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% render_block "home" "banner_1" as home_banner_1 %}{% if home_banner_1 %}
+<section class="section"><div class="container"><div class="content-block-section">{{ home_banner_1 }}</div></div></section>
+{% endif %}
+{% render_block "home" "banner_2" as home_banner_2 %}{% if home_banner_2 %}
+<section class="section section-alt"><div class="container"><div class="content-block-section">{{ home_banner_2 }}</div></div></section>
+{% endif %}
+{% endblock content %}

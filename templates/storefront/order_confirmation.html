@@ -1,0 +1,25 @@
+{% extends "storefront/base.html" %}
+{% block title %}Order Confirmed · Single Origin Society{% endblock title %}
+{% block content %}
+<section class="section">
+  <div class="container-narrow confirmation-center">
+    <h1 class="confirmation-heading">Thank You</h1>
+    <p class="confirmation-order-number">ORDER {{ order.order_number }}</p>
+    <p class="confirmation-text">Your order has been confirmed. We'll send you a shipping confirmation when your items are on their way.</p>
+    <div class="order-details-box">
+      <h3 class="order-details-title">Order Details</h3>
+      {% for item in order.items.all %}
+      <div class="order-details-item">
+        <span>{{ item.product_name }} × {{ item.quantity }}</span>
+        <span>${{ item.total_price }}</span>
+      </div>
+      {% endfor %}
+      <div class="order-details-total">
+        <span>Total</span>
+        <span class="total-price">${{ order.total }}</span>
+      </div>
+    </div>
+    <a href="{% url 'storefront:shop' %}" class="btn btn-gold">Continue Shopping</a>
+  </div>
+</section>
+{% endblock content %}

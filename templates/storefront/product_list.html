@@ -1,0 +1,78 @@
+{% extends "storefront/base.html" %}
+{% load content_blocks %}
+{% block title %}Shop{% if current_category %} {{ current_category|title }}{% endif %} · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>{% if current_category %}{{ current_category|title }}{% else %}Shop All{% endif %}</h1>
+  <p class="subtitle">Curated selections for the intentional palate</p>
+</div>
+{% render_block "shop" "banner" as shop_banner %}{% if shop_banner %}
+<div class="content-block-section container content-block-banner-spacing">{{ shop_banner }}</div>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="filter-buttons">
+        <a href="{% url 'storefront:shop' %}" class="btn btn-sm {% if not current_category %}btn-dark{% else %}btn-outline{% endif %}">All</a>
+        <a href="{% url 'storefront:coffee' %}" class="btn btn-sm {% if current_category == 'coffee' %}btn-dark{% else %}btn-outline{% endif %}">Coffee</a>
+        <a href="{% url 'storefront:tea' %}" class="btn btn-sm {% if current_category == 'tea' %}btn-dark{% else %}btn-outline{% endif %}">Tea</a>
+        <a href="{% url 'storefront:accessories' %}" class="btn btn-sm {% if current_category == 'accessories' %}btn-dark{% else %}btn-outline{% endif %}">Accessories</a>
+        <a href="{% url 'storefront:drinkware' %}" class="btn btn-sm {% if current_category == 'drinkware' %}btn-dark{% else %}btn-outline{% endif %}">Drinkware</a>
+        <a href="{% url 'storefront:gift_sets' %}" class="btn btn-sm {% if current_category == 'gift_sets' %}btn-dark{% else %}btn-outline{% endif %}">Gift Sets</a>
+      </div>
+      <form method="get" class="filter-search-form">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search products..." class="form-control filter-search-input">
+        <select name="sort" class="form-control filter-search-input">
+          <option value="-created_at">Newest</option>
+          <option value="price">Price: Low to High</option>
+          <option value="-price">Price: High to Low</option>
+          <option value="name">Name A-Z</option>
+          <option value="-name">Name Z-A</option>
+        </select>
+        <select name="collection" class="form-control filter-search-input">
+          <option value="">All Collections</option>
+          <option value="featured" {% if current_collection == 'featured' %}selected{% endif %}>Featured</option>
+          <option value="new-arrivals" {% if current_collection == 'new-arrivals' %}selected{% endif %}>New Arrivals</option>
+          <option value="value-finds" {% if current_collection == 'value-finds' %}selected{% endif %}>Value Finds</option>
+        </select>
+        <button type="submit" class="btn btn-dark btn-sm">Search</button>
+      </form>
+    </div>
+
+    {% if products %}
+    <div class="product-grid">
+      {% for product in products %}
+      <a href="{{ product.get_absolute_url }}" class="product-card">
+        <div class="product-card-image">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="280" height="280">
+          {% else %}
+          <span class="product-no-image">{{ product.name }}</span>
+          {% endif %}
+        </div>
+        <div class="product-card-body">
+          {% if product.origin %}<div class="origin">{{ product.origin }}</div>{% endif %}
+          <h3>{{ product.name }}</h3>
+          {% if product.stock_available == 0 %}
+          <span class="badge badge-cancelled">Out of Stock</span>
+          {% elif product.is_low_stock %}
+          <span class="badge badge-pending">Low Stock</span>
+          {% endif %}
+          <div class="price">
+            ${{ product.price }}
+            {% if product.compare_price %}<span class="compare">${{ product.compare_price }}</span>{% endif %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <h3 class="empty-state-title">No products found</h3>
+      <p>Check back soon — new arrivals are always on the horizon.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,36 @@
+{% extends "storefront/base.html" %}
+{% load content_blocks %}
+{% block title %}About · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  {% render_block "about" "hero_image" %}
+  <h1>Our Story</h1>
+  <p class="subtitle">Sourced with intention · Brewed with ritual</p>
+</div>
+<section class="section">
+  <div class="container-narrow page-content">
+    {% if page and page.image %}
+      <div class="utility-page-image-wrap">
+        <img src="{{ page.image.url }}" alt="{{ page_visual_alt }}" class="utility-page-image" width="1200" height="700">
+      </div>
+    {% endif %}
+    {% render_block "about" "intro" as about_intro %}
+    {% if about_intro %}
+      {{ about_intro }}
+    {% elif page %}
+      {{ page.body|safe }}
+    {% else %}
+      <p>Single Origin Society was born from a simple belief: that every cup tells a story. We are a quiet-luxury coffee and tea brand dedicated to sourcing the world's finest single-origin beans and leaves — directly from the farmers who grow them.</p>
+      <p>Our approach is intentional. We visit each origin, build lasting relationships with producers, and ensure that every step of the supply chain reflects our values: quality, transparency, and respect for craft.</p>
+      <p>We believe that the daily ritual of brewing should be a moment of presence — a pause in the day where aroma, warmth, and flavor converge. Whether you're a seasoned connoisseur or just beginning to explore single-origin coffee and tea, we invite you to slow down and savor the experience.</p>
+      <h2 class="values-heading">Our Values</h2>
+      <p><strong>Direct Trade:</strong> We work directly with farmers, ensuring fair prices and exceptional quality from origin to cup.</p>
+      <p><strong>Small Batch:</strong> Every roast is crafted in small batches to preserve the unique character of each origin.</p>
+      <p><strong>Community:</strong> Through our fundraising campaigns, we invest in the communities that make our work possible.</p>
+      <p><strong>Sustainability:</strong> We are committed to environmentally responsible sourcing and packaging practices.</p>
+    {% endif %}
+    {% render_block "about" "values" as about_values %}
+    {% if about_values %}<div class="content-block-section">{{ about_values }}</div>{% endif %}
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,62 @@
+{% extends "storefront/base.html" %}
+{% block title %}Cart · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Your Cart</h1>
+</div>
+<section class="section">
+  <div class="container">
+    {% if items %}
+    <table class="cart-table">
+      <thead>
+        <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <div class="cart-product">
+              {% if item.product.image %}<a href="{{ item.product.get_absolute_url }}"><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="80" height="80"></a>{% endif %}
+              <div>
+                <a href="{{ item.product.get_absolute_url }}"><strong>{{ item.product.name }}</strong></a>
+                {% if item.variant_title and item.variant_title != "Default Title" %}<br><span class="cart-origin">{{ item.variant_title }}</span>{% endif %}
+              </div>
+            </div>
+          </td>
+          <td>${{ item.price }}</td>
+          <td>
+            <form method="post" action="{% url 'storefront:cart_update' %}" class="cart-update-form">
+              {% csrf_token %}
+              <input type="hidden" name="line_id" value="{{ item.line_id }}">
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="99" class="cart-quantity-input">
+              <button type="submit" class="btn btn-sm btn-outline">Update</button>
+            </form>
+          </td>
+          <td>${{ item.line_total }}</td>
+          <td>
+            <form method="post" action="{% url 'storefront:cart_remove' %}">
+              {% csrf_token %}
+              <input type="hidden" name="line_id" value="{{ item.line_id }}">
+              <button type="submit" class="btn btn-sm cart-remove-btn">×</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="cart-summary">
+      <p class="cart-subtotal-label">Subtotal</p>
+      <p class="total">${{ subtotal }}</p>
+      <p class="cart-shipping-note">Shipping, taxes, and discounts calculated at checkout.</p>
+      <a href="{% url 'storefront:checkout' %}" class="btn btn-gold">Proceed to Checkout</a>
+    </div>
+    {% else %}
+    <div class="cart-empty">
+      <h3 class="cart-empty-title">Your cart is empty</h3>
+      <p class="cart-empty-text">Discover something exceptional.</p>
+      <a href="{% url 'storefront:shop' %}" class="btn btn-gold">Shop Now</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

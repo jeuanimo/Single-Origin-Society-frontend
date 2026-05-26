@@ -1,0 +1,41 @@
+{% extends "storefront/base.html" %}
+{% block title %}Fundraising · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Fundraising</h1>
+  <p class="subtitle">Together we create lasting impact in the communities that grow our coffee and tea</p>
+</div>
+<section class="section">
+  <div class="container">
+    {% if campaigns %}
+    <div class="product-grid">
+      {% for campaign in campaigns %}
+      <a href="{% url 'storefront:fundraising_detail' campaign.slug %}" class="campaign-card">
+        {% if campaign.image %}
+        <div class="campaign-image-wrapper">
+          <img src="{{ campaign.image.url }}" alt="{{ campaign.title }}" class="campaign-cover-img" width="400" height="225">
+        </div>
+        {% endif %}
+        <div class="campaign-card-body">
+          <h3 class="campaign-card-title">{{ campaign.title }}</h3>
+          {% if campaign.beneficiary %}<p class="campaign-beneficiary">{{ campaign.beneficiary }}</p>{% endif %}
+          <p class="campaign-card-desc">{{ campaign.description|truncatewords:25 }}</p>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: {{ campaign.percent_raised }}%;"></div>
+          </div>
+          <div class="campaign-card-stats">
+            <span>${{ campaign.raised_amount }} raised</span>
+            <span>{{ campaign.percent_raised }}%</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="content-empty">
+      <h3>New campaigns coming soon</h3>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

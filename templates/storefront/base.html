@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock canonical_url %}">
+  <meta name="description" content="{% block meta_description %}Single Origin Society — Quiet luxury coffee and tea. Thoughtfully sourced, carefully roasted, intentionally brewed.{% endblock meta_description %}">
+  <meta name="keywords" content="{% block meta_keywords %}single origin coffee, specialty tea, quiet luxury, artisan roasting, brewing ritual, tasting notes, direct trade{% endblock meta_keywords %}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock og_type %}">
+  <meta property="og:title" content="{% block og_title %}Single Origin Society{% endblock og_title %}">
+  <meta property="og:description" content="{% block og_description %}Quiet luxury coffee and tea. Thoughtfully sourced and intentionally brewed.{% endblock og_description %}">
+  <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock og_url %}">
+  <meta property="og:site_name" content="Single Origin Society">
+  {% block og_image %}{% endblock og_image %}
+  <link rel="icon" type="image/png" href="{% static 'images/soslogo.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/soslogo.png' %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}Single Origin Society{% endblock twitter_title %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Quiet luxury coffee and tea. Thoughtfully sourced and intentionally brewed.{% endblock twitter_description %}">
+  <title>{% block title %}Single Origin Society{% endblock title %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/storefront.css' %}">
+  {% block extra_css %}{% endblock extra_css %}
+</head>
+<body>
+  {% include "includes/header.html" %}
+
+  {% if messages %}
+  <div class="container messages-container">
+    <ul class="messages">
+      {% for message in messages %}
+      <li class="message {{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if request.resolver_match.url_name != 'home' %}
+  <section class="global-page-brandmark">
+    <img src="{% static 'images/sos.jpg' %}" alt="Single Origin Society" class="global-page-brandmark-image" width="520" height="520">
+  </section>
+  {% endif %}
+
+  {% block content %}{% endblock content %}
+
+  {% include "includes/footer.html" %}
+
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

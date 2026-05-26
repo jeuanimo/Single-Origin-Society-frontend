@@ -1,0 +1,39 @@
+{% extends "storefront/base.html" %}
+{% block title %}{{ title }} · Single Origin Society{% endblock title %}
+{% block meta_description %}{{ page.meta_description|default:'Explore Single Origin Society resources and information.' }}{% endblock meta_description %}
+{% block content %}
+<div class="page-hero">
+  <h1>{{ title }}</h1>
+</div>
+<section class="section">
+  <div class="container-narrow page-content utility-page-content">
+    {% if page and page.image %}
+    <div class="utility-page-image-wrap">
+      <img src="{{ page.image.url }}" alt="{{ page_visual_alt }}" class="utility-page-image" width="1200" height="700">
+    </div>
+    {% endif %}
+    <div class="utility-page-body">
+      {{ body|safe }}
+    </div>
+
+    {% if inquiry_form %}
+    <div class="utility-form-wrap">
+      <h2 class="utility-form-title">{{ inquiry_heading }}</h2>
+      <form method="post" class="utility-form">
+        {% csrf_token %}
+        {% for field in inquiry_form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+          <div class="field-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-gold">{{ inquiry_submit_label }}</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

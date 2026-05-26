@@ -1,0 +1,52 @@
+{% load static %}
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Single Origin <span class="footer-logo-accent">Society</span></div>
+        <p>Quiet luxury for the intentional palate. Sourced with purpose, brewed with ritual, savored with intention.</p>
+        <form method="post" action="{% url 'storefront:newsletter_subscribe' %}" class="footer-newsletter">
+          {% csrf_token %}
+          <input type="hidden" name="source" value="footer">
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <input type="hidden" name="ref" value="{{ referral_placeholder }}">
+          <input type="hidden" name="utm_source" value="{{ utm_source_placeholder }}">
+          <input type="hidden" name="utm_medium" value="{{ utm_medium_placeholder }}">
+          <input type="hidden" name="utm_campaign" value="{{ utm_campaign_placeholder }}">
+          <input type="hidden" name="landing_path" value="{{ landing_path_placeholder }}">
+          <input type="email" name="email" placeholder="Your email address" required>
+          <button type="submit" class="btn btn-gold btn-sm btn-block">Subscribe</button>
+        </form>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="{% url 'storefront:coffee' %}">Coffee</a>
+        <a href="{% url 'storefront:tea' %}">Tea</a>
+        <a href="{% url 'storefront:accessories' %}">Accessories</a>
+        <a href="{% url 'storefront:drinkware' %}">Drinkware</a>
+        <a href="{% url 'storefront:gift_sets' %}">Gift Sets</a>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="{% url 'storefront:brewing_guides' %}">Brewing Guides</a>
+        <a href="{% url 'storefront:tasting_notes' %}">Tasting Notes</a>
+        <a href="{% url 'storefront:ritual_journal' %}">Ritual Journal</a>
+        <a href="{% url 'storefront:fundraising' %}">Fundraising</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="{% url 'storefront:faq' %}">FAQ</a>
+        <a href="{% url 'storefront:policy_shipping' %}">Shipping</a>
+        <a href="{% url 'storefront:policy_refunds' %}">Refunds</a>
+        <a href="{% url 'storefront:policy_privacy' %}">Privacy Policy</a>
+        <a href="{% url 'storefront:policy_terms' %}">Terms of Service</a>
+        <a href="{% url 'storefront:wholesale' %}">Wholesale</a>
+        <a href="{% url 'storefront:ambassador_program' %}">Ambassador Program</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ "now"|date:"Y" }} Single Origin Society. All rights reserved.</span>
+      <span>Site design and page creation by <a href="https://mitchelltechgroup.com" target="_blank" rel="noopener noreferrer">Mitchell Technology Group, LLC</a>.</span>
+    </div>
+  </div>
+</footer>

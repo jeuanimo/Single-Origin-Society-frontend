@@ -1,0 +1,42 @@
+{% extends "storefront/base.html" %}
+{% block title %}{% if landing.meta_title %}{{ landing.meta_title }}{% else %}{{ landing.title }} · Single Origin Society{% endif %}{% endblock title %}
+{% block meta_description %}{% if landing.meta_description %}{{ landing.meta_description }}{% else %}{{ landing.subtitle|default:landing.body|truncatewords:32 }}{% endif %}{% endblock meta_description %}
+{% block og_title %}{% if landing.og_title %}{{ landing.og_title }}{% else %}{{ landing.title }}{% endif %}{% endblock og_title %}
+{% block og_description %}{% if landing.og_description %}{{ landing.og_description }}{% else %}{{ landing.subtitle|default:landing.body|truncatewords:32 }}{% endif %}{% endblock og_description %}
+{% block og_image %}
+  {% if landing.hero_image %}
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ landing.hero_image.url }}">
+  {% endif %}
+{% endblock og_image %}
+
+{% block content %}
+<section class="hero {% if landing.hero_image %}has-image{% endif %}"{% if landing.hero_image %} style="background-image: linear-gradient(120deg, rgba(26, 26, 26, 0.9), rgba(37, 37, 37, 0.78)), url('{{ landing.hero_image.url }}');"{% endif %}>
+  <h1 class="animate-fade-in-up">{{ landing.title }}</h1>
+  {% if landing.subtitle %}<p class="animate-fade-in-up-delay">{{ landing.subtitle }}</p>{% endif %}
+  {% if landing.cta_label and landing.cta_url %}
+  <div class="animate-fade-in-up-delay-2">
+    <a href="{{ landing.cta_url }}" class="btn btn-gold">{{ landing.cta_label }}</a>
+  </div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="container-narrow">
+    <div class="content-body content-body-preline">{{ landing.body }}</div>
+
+    <form method="post" action="{% url 'storefront:newsletter_subscribe' %}" class="newsletter-form-home">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="campaign:{{ landing.slug }}">
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <input type="hidden" name="ref" value="{{ referral_placeholder }}">
+      <input type="hidden" name="utm_source" value="{{ utm_source_placeholder }}">
+      <input type="hidden" name="utm_medium" value="{{ utm_medium_placeholder }}">
+      <input type="hidden" name="utm_campaign" value="{{ utm_campaign_placeholder }}">
+      <input type="hidden" name="landing_path" value="{{ landing_path_placeholder }}">
+      <label for="id_campaign_email" class="sr-only">Email address</label>
+      <input id="id_campaign_email" type="email" name="email" class="form-control" placeholder="Enter your email" required>
+      <button type="submit" class="btn btn-dark">Stay Updated</button>
+    </form>
+  </div>
+</section>
+{% endblock content %}

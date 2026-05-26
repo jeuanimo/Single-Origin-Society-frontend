@@ -1,0 +1,45 @@
+{% extends "storefront/base.html" %}
+{% block title %}{{ post.title }} · Ritual Journal{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>{{ post.title }}</h1>
+  <p class="subtitle">{{ post.get_entry_type_display }}</p>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    {% if post.image %}
+    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="content-img-full" width="900" height="480">
+    {% endif %}
+
+    <p class="journal-featured-meta">{{ post.published_at|date:"F j, Y" }}{% if post.author %} · {{ post.author.get_full_name|default:post.author.email }}{% endif %}</p>
+
+    {% if post.excerpt %}
+    <p class="guide-detail-desc">{{ post.excerpt }}</p>
+    {% endif %}
+
+    <div class="guide-instructions">{{ post.body|linebreaks }}</div>
+
+    {% if post_tags %}
+    <div class="tag-cloud">
+      {% for tag in post_tags %}
+      <a href="{% url 'storefront:ritual_journal' %}?tag={{ tag }}" class="tag-chip">#{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if related_posts %}
+    <div class="section-header p-mt-24">
+      <h2>More from the Journal</h2>
+      <div class="divider"></div>
+    </div>
+    {% for related in related_posts %}
+    <article class="journal-entry">
+      <div class="date">{{ related.published_at|date:"F j, Y" }}</div>
+      <h3 class="journal-entry-title"><a href="{% url 'storefront:ritual_journal_detail' related.slug %}">{{ related.title }}</a></h3>
+      <p class="journal-entry-body">{{ related.excerpt|default:related.body|truncatewords:28 }}</p>
+    </article>
+    {% endfor %}
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

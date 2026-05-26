@@ -1,0 +1,55 @@
+{% extends "storefront/base.html" %}
+{% block title %}Ritual Journal · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Ritual Journal</h1>
+  <p class="subtitle">Slow living, seasonal reflection, and brewing philosophy</p>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    <form method="get" class="guide-filters">
+      <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search journal entries">
+      <select name="entry_type" class="form-control">
+        <option value="">All editorial themes</option>
+        {% for value, label in entry_type_choices %}
+        <option value="{{ value }}" {% if current_entry_type == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-dark btn-sm" type="submit">Apply</button>
+    </form>
+
+    {% if all_tags %}
+    <div class="tag-cloud">
+      {% for tag in all_tags %}
+      <a href="?tag={{ tag }}" class="tag-chip {% if current_tag == tag %}active{% endif %}">#{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if featured_post %}
+    <article class="journal-featured">
+      <p class="journal-featured-type">{{ featured_post.get_entry_type_display }}</p>
+      <h2><a href="{% url 'storefront:ritual_journal_detail' featured_post.slug %}">{{ featured_post.title }}</a></h2>
+      {% if featured_post.excerpt %}
+      <p>{{ featured_post.excerpt }}</p>
+      {% else %}
+      <p>{{ featured_post.body|truncatewords:45 }}</p>
+      {% endif %}
+      <p class="journal-featured-meta">{{ featured_post.published_at|date:"F j, Y" }}{% if featured_post.author %} · {{ featured_post.author.get_full_name|default:featured_post.author.email }}{% endif %}</p>
+    </article>
+    {% endif %}
+
+    {% for post in posts %}
+    <article class="journal-entry">
+      <div class="date">{{ post.published_at|date:"F j, Y" }}</div>
+      <h3 class="journal-entry-title"><a href="{% url 'storefront:ritual_journal_detail' post.slug %}">{{ post.title }}</a></h3>
+      <div class="journal-entry-meta">{{ post.get_entry_type_display }}</div>
+      <p class="journal-entry-body">{{ post.excerpt|default:post.body|truncatewords:35 }}</p>
+      <a href="{% url 'storefront:ritual_journal_detail' post.slug %}" class="btn btn-outline btn-sm">Read Article</a>
+    </article>
+    {% empty %}
+    <p class="journal-empty">No ritual journal entries have been published yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

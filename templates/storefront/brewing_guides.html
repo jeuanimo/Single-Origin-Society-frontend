@@ -1,0 +1,98 @@
+{% extends "storefront/base.html" %}
+{% load content_blocks %}
+{% block title %}Brewing Guides · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Brewing Guides</h1>
+  <p class="subtitle">From first pour to refined ritual</p>
+</div>
+<section class="section">
+  <div class="container">
+    {% render_block "brewing_guides" "intro" as guides_intro %}{% if guides_intro %}<div class="page-content content-block-section">{{ guides_intro }}</div>{% endif %}
+    <form method="get" class="guide-filters">
+      <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search method, guide title, tags">
+      <select name="guide_type" class="form-control">
+        <option value="">All guide types</option>
+        {% for value, label in guide_type_choices %}
+        <option value="{{ value }}" {% if current_guide_type == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="level" class="form-control">
+        <option value="">All levels</option>
+        <option value="beginner" {% if current_level == 'beginner' %}selected{% endif %}>Beginner-Friendly</option>
+        <option value="intermediate" {% if current_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+        <option value="advanced" {% if current_level == 'advanced' %}selected{% endif %}>Advanced</option>
+      </select>
+      <button class="btn btn-dark btn-sm" type="submit">Apply</button>
+    </form>
+
+    {% if beginner_guides %}
+    <div class="section-header">
+      <h2>Beginner-Friendly Foundations</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="guide-grid">
+      {% for guide in beginner_guides %}
+      <a href="{% url 'storefront:brewing_guide_detail' guide.slug %}" class="guide-card guide-card-lite">
+        <div class="guide-card-image">
+          {% if guide.image %}<img src="{{ guide.image.url }}" alt="{{ guide.title }}" width="280" height="200">{% else %}<span class="guide-card-noimage">{{ guide.method }}</span>{% endif %}
+        </div>
+        <div>
+          <h3 class="guide-card-title">{{ guide.title }}</h3>
+          <p class="guide-card-desc">{{ guide.description|truncatewords:18 }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if premium_guides %}
+    <div class="section-header p-mt-24">
+      <h2>Premium Technique Studio</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="premium-guide-stack">
+      {% for guide in premium_guides %}
+      <a href="{% url 'storefront:brewing_guide_detail' guide.slug %}" class="guide-card guide-card-premium">
+        <div class="guide-card-image">
+          {% if guide.image %}<img src="{{ guide.image.url }}" alt="{{ guide.title }}" width="480" height="280">{% else %}<span class="guide-card-noimage">{{ guide.method }}</span>{% endif %}
+        </div>
+        <div>
+          <h3 class="guide-card-title">{{ guide.title }}</h3>
+          <p class="guide-card-desc">{{ guide.description|truncatewords:30 }}</p>
+          <div class="guide-specs">
+            {% if guide.water_temp %}<span class="guide-spec">{{ guide.water_temp }}</span>{% endif %}
+            {% if guide.brew_time %}<span class="guide-spec">{{ guide.brew_time }}</span>{% endif %}
+            {% if guide.ratio %}<span class="guide-spec">Ratio {{ guide.ratio }}</span>{% endif %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if guides %}
+    <div class="section-header p-mt-24">
+      <h2>Browse by Method</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="guide-method-sections">
+      {% for section, section_guides in guide_type_sections.items %}
+        {% if section_guides %}
+        <div class="guide-method-block">
+          <h3>{{ section|cut:'_'|title }}</h3>
+          {% for guide in section_guides %}
+          <a href="{% url 'storefront:brewing_guide_detail' guide.slug %}" class="guide-method-link">{{ guide.title }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="content-empty">
+      <h3>Guides coming soon</h3>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

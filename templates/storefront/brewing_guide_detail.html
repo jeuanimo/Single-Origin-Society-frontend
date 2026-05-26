@@ -1,0 +1,50 @@
+{% extends "storefront/base.html" %}
+{% block title %}{{ guide.title }} · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>{{ guide.title }}</h1>
+  <p class="subtitle">{{ guide.get_guide_type_display }} · {{ guide.get_audience_level_display }}</p>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    {% if guide.image %}<img src="{{ guide.image.url }}" alt="{{ guide.title }}" class="content-img-full" width="800" height="450">{% endif %}
+    <p class="guide-detail-desc">{{ guide.description }}</p>
+    {% if guide.water_temp or guide.brew_time or guide.grind_size or guide.ratio %}
+    <div class="guide-specs-grid">
+      {% if guide.water_temp %}
+      <div class="guide-spec-item">
+        <div class="guide-spec-label">Water Temp</div>
+        <div class="guide-spec-value">{{ guide.water_temp }}</div>
+      </div>
+      {% endif %}
+      {% if guide.brew_time %}
+      <div class="guide-spec-item">
+        <div class="guide-spec-label">Brew Time</div>
+        <div class="guide-spec-value">{{ guide.brew_time }}</div>
+      </div>
+      {% endif %}
+      {% if guide.grind_size %}
+      <div class="guide-spec-item">
+        <div class="guide-spec-label">Grind Size</div>
+        <div class="guide-spec-value">{{ guide.grind_size }}</div>
+      </div>
+      {% endif %}
+      {% if guide.ratio %}
+      <div class="guide-spec-item">
+        <div class="guide-spec-label">Ratio</div>
+        <div class="guide-spec-value">{{ guide.ratio }}</div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% if guide.tags %}
+    <div class="tag-cloud">
+      {% for tag in guide.tags.split(',') %}
+      <span class="tag-chip">#{{ tag|lower }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="guide-instructions">{{ guide.instructions }}</div>
+  </div>
+</section>
+{% endblock content %}

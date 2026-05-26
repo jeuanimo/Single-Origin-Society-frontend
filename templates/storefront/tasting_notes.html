@@ -1,0 +1,53 @@
+{% extends "storefront/base.html" %}
+{% block title %}Tasting Notes · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Tasting Notes</h1>
+  <p class="subtitle">Search flavor profiles, aromas, origins, and pairings</p>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    <form method="get" class="guide-filters">
+      <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search flavor, aroma, origin, pairing, style">
+      <button class="btn btn-dark btn-sm" type="submit">Search</button>
+    </form>
+
+    {% if all_tags %}
+    <div class="tag-cloud">
+      {% for tag in all_tags %}
+      <a href="?tag={{ tag }}" class="tag-chip {% if current_tag == tag %}active{% endif %}">#{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for note in notes %}
+    <div class="tasting-note-list-item">
+      <div class="tasting-note-product">
+        {% if note.product %}{{ note.product.name }}{% endif %}
+      </div>
+      <h3 class="tasting-note-list-title">{{ note.title }}</h3>
+      <p class="tasting-note-list-body">{{ note.body }}</p>
+      <div class="tasting-note-list-details">
+        {% if note.aroma %}<span><strong>Aroma:</strong> {{ note.aroma }}</span>{% endif %}
+        {% if note.flavor %}<span><strong>Flavor:</strong> {{ note.flavor }}</span>{% endif %}
+        {% if note.finish %}<span><strong>Finish:</strong> {{ note.finish }}</span>{% endif %}
+        {% if note.origin %}<span><strong>Origin:</strong> {{ note.origin }}</span>{% endif %}
+        {% if note.pairings %}<span><strong>Pairings:</strong> {{ note.pairings }}</span>{% endif %}
+        {% if note.style_notes %}<span><strong>Roast/Tea Style:</strong> {{ note.style_notes }}</span>{% endif %}
+      </div>
+      {% if note.tags %}
+      <div class="tag-cloud">
+        {% for tag in note.tag_list %}
+        <a href="?tag={{ tag }}" class="tag-chip">#{{ tag }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="content-empty">
+      <h3>Tasting notes coming soon</h3>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

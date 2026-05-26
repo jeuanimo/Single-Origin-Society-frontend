@@ -1,0 +1,259 @@
+{% extends "storefront/base.html" %}
+{% block title %}{% if product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} · Single Origin Society{% endif %}{% endblock title %}
+{% block meta_description %}{% if product.meta_description %}{{ product.meta_description }}{% else %}{{ product.short_description|truncatewords:28 }}{% endif %}{% endblock meta_description %}
+{% block og_title %}{% if product.og_title %}{{ product.og_title }}{% elif product.meta_title %}{{ product.meta_title }}{% else %}{{ product.name }} · Single Origin Society{% endif %}{% endblock og_title %}
+{% block og_description %}{% if product.og_description %}{{ product.og_description }}{% elif product.meta_description %}{{ product.meta_description }}{% else %}{{ product.short_description|truncatewords:28 }}{% endif %}{% endblock og_description %}
+{% block og_type %}product{% endblock og_type %}
+{% block og_image %}
+  {% if product.image %}
+  <meta property="og:image" content="{{ product.image.url }}">
+  {% endif %}
+{% endblock og_image %}
+{% block content %}
+<section class="container">
+  <div class="product-detail product-detail-editorial">
+    <div>
+      <div class="product-detail-image img-reveal product-main-image">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" width="900" height="900">
+        {% else %}
+        <span class="product-no-image product-no-image-lg">{{ product.name }}</span>
+        {% endif %}
+      </div>
+
+      {% if product.images.exists %}
+      <div class="product-gallery-strip">
+        {% for gallery_image in product.images.all|slice:":4" %}
+        <div class="product-gallery-thumb">
+          <img src="{{ gallery_image.url }}" alt="{{ product.name }} view {{ forloop.counter }}" width="180" height="180">
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="product-detail-info">
+      {% if product.origin %}<div class="product-detail-origin">Origin: {{ product.origin }}</div>{% elif product.blend_info %}<div class="product-detail-origin">Blend: {{ product.blend_info }}</div>{% endif %}
+      <h1>{{ product.name }}</h1>
+      <div class="price">
+        ${{ product.price }}
+        {% if product.compare_price %}<span class="compare-price">${{ product.compare_price }}</span>{% endif %}
+      </div>
+      <p>
+        {% if product.stock_available == 0 %}
+          <span class="badge badge-cancelled">Out of Stock</span>
+        {% elif product.is_low_stock %}
+          <span class="badge badge-pending">Low Stock: {{ product.stock_available }} left</span>
+        {% else %}
+          <span class="badge badge-confirmed">In Stock</span>
+        {% endif %}
+      </p>
+      <p class="description">{{ product.description }}</p>
+
+      {% if product.variants|length > 1 %}
+      <div class="form-group">
+        <label for="id_variant_select">Option</label>
+        <select id="id_variant_select" class="form-control" onchange="document.getElementById('id_variant_id').value=this.value">
+          {% for v in product.variants %}
+          <option value="{{ v.id }}"{% if forloop.first %} selected{% endif %}>{{ v.title }} — ${{ v.price }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      {% if product.available_sizes or product.weight or product.grind_options %}
+      <dl class="product-meta">
+        {% if product.available_sizes %}
+        <dt>Available Sizes</dt><dd>{{ product.available_sizes }}</dd>
+        {% elif product.weight %}
+        <dt>Available Sizes</dt><dd>{{ product.weight }}</dd>
+        {% endif %}
+        {% if is_coffee %}
+        <dt>Grind Options</dt><dd>{{ product.grind_options|default:"Whole Bean, Pour Over, French Press, Espresso" }}</dd>
+        {% endif %}
+      </dl>
+      {% endif %}
+
+      {% if product.roast_level or product.flavor_notes or product.weight %}
+      <dl class="product-meta">
+        {% if product.roast_level %}
+        <dt>Roast Level</dt><dd>{{ product.roast_level }}</dd>
+        {% endif %}
+        {% if product.flavor_notes %}
+        <dt>Flavor Notes</dt><dd>{{ product.flavor_notes }}</dd>
+        {% endif %}
+        {% if product.weight %}
+        <dt>Weight</dt><dd>{{ product.weight }}</dd>
+        {% endif %}
+      </dl>
+      {% endif %}
+
+      <form method="post" action="{% url 'storefront:cart_add' %}">
+        {% csrf_token %}
+        <input type="hidden" name="variant_id" id="id_variant_id" value="{{ product.default_variant_id }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div class="quantity-input">
+          <label class="quantity-label" for="id_quantity">Quantity</label>
+          <input type="number" name="quantity" value="1" min="1"
+            max="{% if product.stock_available %}{{ product.stock_available }}{% else %}99{% endif %}"
+            id="id_quantity">
+        </div>
+        <button type="submit" class="btn btn-gold btn-block"
+          {% if product.stock_available == 0 %}disabled{% endif %}>Add to Cart</button>
+      </form>
+
+      {% if review_count %}
+      <p class="sku-text">{{ review_count }} review{{ review_count|pluralize }} · {{ avg_rating }}/5 average</p>
+      {% endif %}
+
+      <div class="subscription-placeholder">
+        <strong>Subscription</strong>
+        <p>
+          {% if product.is_subscription_available %}
+            Subscription option coming soon for this product.
+          {% else %}
+            Subscription options are planned for future release.
+          {% endif %}
+        </p>
+      </div>
+
+      {% if product.sku %}<p class="sku-text">SKU: {{ product.sku }}</p>{% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream">
+  <div class="container-narrow">
+    <div class="section-header">
+      <h2>Tasting &amp; Sensory Profile</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-card">
+        <h3>Aroma</h3>
+        <p>{{ product.aroma_profile|default:product.flavor_notes|default:"Layered, aromatic, and expressive." }}</p>
+      </div>
+      {% if is_coffee %}
+      <div class="profile-card">
+        <h3>Body</h3>
+        <p>{{ product.body_profile|default:"Balanced and structured." }}</p>
+      </div>
+      <div class="profile-card">
+        <h3>Acidity</h3>
+        <p>{{ product.acidity_profile|default:"Clean and lively." }}</p>
+      </div>
+      <div class="profile-card">
+        <h3>Finish</h3>
+        <p>{{ product.finish_profile|default:"Elegant and lingering." }}</p>
+      </div>
+      {% elif is_tea %}
+      <div class="profile-card">
+        <h3>Steeping Notes</h3>
+        <p>{{ product.steeping_notes|default:"Start with 1 tsp per cup, adjust time and temperature to taste." }}</p>
+      </div>
+      <div class="profile-card">
+        <h3>Finish</h3>
+        <p>{{ product.finish_profile|default:"Silky and aromatic." }}</p>
+      </div>
+      {% else %}
+      <div class="profile-card">
+        <h3>Finish</h3>
+        <p>{{ product.finish_profile|default:"Refined and clean." }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container-narrow">
+    <div class="section-header">
+      <h2>Brewing Guidance</h2>
+      <div class="divider"></div>
+    </div>
+    {% if product_guides %}
+      {% for guide in product_guides %}
+      <div class="tasting-note-item">
+        <h3 class="tasting-note-title">{{ guide.title }} · {{ guide.method }}</h3>
+        <p class="tasting-note-body">{{ guide.description }}</p>
+        <p class="sku-text">{{ guide.brew_time }}{% if guide.water_temp %} · {{ guide.water_temp }}{% endif %}{% if guide.ratio %} · Ratio {{ guide.ratio }}{% endif %}</p>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="tasting-note-body">Brewing guide details will be published soon for this product.</p>
+    {% endif %}
+    <div class="ritual-description">
+      <h3>Ritual</h3>
+      <p>{{ product.ritual_description|default:"Begin with a quiet moment. Warm your vessel, breathe in the aroma, and brew with intention." }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream">
+  <div class="container-narrow">
+    <div class="section-header">
+      <h2>Customer Reviews</h2>
+      <div class="divider"></div>
+    </div>
+    {% for review in reviews %}
+    <div class="tasting-note-item">
+      <h3 class="tasting-note-title">{{ review.title }} · {{ review.rating }}/5</h3>
+      <p class="tasting-note-body">{{ review.body }}</p>
+    </div>
+    {% empty %}
+    <p>Reviews are managed through our Shopify store. <a href="{{ product.get_absolute_url }}" target="_blank" rel="noopener">Leave a review after your purchase.</a></p>
+    {% endfor %}
+  </div>
+</section>
+
+{% if related_products %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>You May Also Enjoy</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="product-grid">
+      {% for p in related_products %}
+      <a href="{{ p.get_absolute_url }}" class="product-card">
+        <div class="product-card-image">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="{{ p.name }}" width="280" height="280">
+          {% else %}
+          <span class="product-no-image">{{ p.name }}</span>
+          {% endif %}
+        </div>
+        <div class="product-card-body">
+          <h3>{{ p.name }}</h3>
+          <div class="price">${{ p.price }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock content %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name|escapejs }}",
+  "sku": "{{ product.sku|escapejs }}",
+  "description": "{{ product.short_description|striptags|truncatewords:40|escapejs }}",
+  "brand": { "@type": "Brand", "name": "Single Origin Society" },
+  {% if product.image %}
+  "image": "{{ product.image.url }}",
+  {% endif %}
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "USD",
+    "price": "{{ product.price }}",
+    "availability": "{% if product.stock_available == 0 %}https://schema.org/OutOfStock{% else %}https://schema.org/InStock{% endif %}",
+    "url": "{{ request.build_absolute_uri }}"
+  }
+}
+</script>
+{% endblock extra_js %}

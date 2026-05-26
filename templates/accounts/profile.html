@@ -1,0 +1,57 @@
+{% extends "storefront/base.html" %}
+{% block title %}My Account · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>My Account</h1>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    <h2 class="section-title-md">Profile</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-gold">Update Profile</button>
+    </form>
+
+    <h2 class="section-title-md section-title-mt">Addresses</h2>
+    {% for address in addresses %}
+    <div class="address-row">
+      <div>
+        <strong>{{ address.label }}</strong><br>
+        <span class="address-detail">{{ address.line1 }}, {{ address.city }}, {{ address.state }} {{ address.postal_code }}</span>
+      </div>
+      <form method="post" action="{% url 'accounts:address_delete' address.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm address-remove-btn">Remove</button>
+      </form>
+    </div>
+    {% endfor %}
+    <a href="{% url 'accounts:address_add' %}" class="btn btn-outline btn-sm address-add-btn">Add Address</a>
+
+    <h2 class="section-title-md section-title-mt">Shopping</h2>
+    <p><a href="{% url 'customers:wishlist' %}" class="btn btn-outline btn-sm">Wishlist ({{ wishlist_count }})</a></p>
+
+    <h2 class="section-title-md section-title-mt">Order History</h2>
+    {% if recent_orders %}
+      {% for order in recent_orders %}
+      <div class="address-row">
+        <div>
+          <strong>{{ order.order_number }}</strong><br>
+          <span class="address-detail">{{ order.created_at|date:"M j, Y" }} · {{ order.get_status_display }} · ${{ order.total }}</span>
+        </div>
+        <a href="{% url 'storefront:order_confirmation' order.order_number %}" class="btn btn-sm btn-outline">View</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No orders yet.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,53 @@
+{% extends "storefront/base.html" %}
+{% load content_blocks %}
+{% block title %}Contact · Single Origin Society{% endblock title %}
+{% block content %}
+<div class="page-hero">
+  <h1>Contact Us</h1>
+  <p class="subtitle">We'd love to hear from you</p>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    {% render_block "contact" "intro" as contact_intro %}{% if contact_intro %}<div class="page-content content-block-section">{{ contact_intro }}</div>{% endif %}
+    <div class="contact-grid">
+      <div>
+        <h2 class="contact-section-title">Get in Touch</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_first_name">First Name</label>
+              <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="id_last_name">Last Name</label>
+              <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="id_email">Email</label>
+            <input type="email" name="email" id="id_email" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="id_subject">Subject</label>
+            <input type="text" name="subject" id="id_subject" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="id_message">Message</label>
+            <textarea name="message" id="id_message" class="form-control" rows="6" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold">Send Message</button>
+        </form>
+      </div>
+      <div>
+        <h2 class="contact-section-title">Details</h2>
+        <div class="contact-details">
+          <p><strong>Email</strong><br>hello@singleoriginsociety.com</p>
+          <p class="contact-detail-block"><strong>Hours</strong><br>Monday – Friday: 9am – 5pm EST</p>
+          <p class="contact-detail-block"><strong>Response Time</strong><br>We typically respond within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

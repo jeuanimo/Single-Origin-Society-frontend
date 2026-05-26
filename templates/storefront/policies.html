@@ -1,0 +1,27 @@
+{% extends "storefront/base.html" %}
+{% load content_blocks %}
+{% block title %}{{ page.title|default:policy_title|default:"Policies" }} · Single Origin Society{% endblock title %}
+{% block meta_description %}{{ page.meta_description|default:'Read Single Origin Society policies for shipping, refunds, privacy, and terms.' }}{% endblock meta_description %}
+{% block content %}
+<div class="page-hero">
+  <h1>{{ page.title|default:policy_title|default:"Policies" }}</h1>
+</div>
+<section class="section">
+  <div class="container-narrow">
+    <div class="policy-nav">
+      <a href="{% url 'storefront:policy_shipping' %}" class="btn btn-sm {% if policy_slug == 'shipping' %}btn-dark{% else %}btn-outline{% endif %}">Shipping</a>
+      <a href="{% url 'storefront:policy_refunds' %}" class="btn btn-sm {% if policy_slug == 'refunds' %}btn-dark{% else %}btn-outline{% endif %}">Refunds</a>
+      <a href="{% url 'storefront:policy_privacy' %}" class="btn btn-sm {% if policy_slug == 'privacy' %}btn-dark{% else %}btn-outline{% endif %}">Privacy</a>
+      <a href="{% url 'storefront:policy_terms' %}" class="btn btn-sm {% if policy_slug == 'terms' %}btn-dark{% else %}btn-outline{% endif %}">Terms</a>
+    </div>
+    {% if page and page.image %}
+    <div class="utility-page-image-wrap">
+      <img src="{{ page.image.url }}" alt="{{ page_visual_alt }}" class="utility-page-image" width="1200" height="700">
+    </div>
+    {% endif %}
+    <div class="page-content">
+      {% render_block "policies" policy_slug as policy_block %}{% if policy_block %}{{ policy_block }}{% elif page %}{{ page.body|safe }}{% else %}{{ policy_body|safe }}{% endif %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

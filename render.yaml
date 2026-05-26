@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: sos-frontend
+    env: python
+    plan: standard
+    buildCommand: >
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput
+    preDeployCommand: python manage.py migrate
+    startCommand: gunicorn sos_project.wsgi:application
+    numInstances: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: sos-frontend.onrender.com,localhost,127.0.0.1
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: https://sos-frontend.onrender.com
+      - key: DB_ENGINE
+        value: django.db.backends.postgresql
+      - key: DB_NAME
+        fromDatabase:
+          name: sos-frontend
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: sos-frontend
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: sos-frontend
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: sos-frontend
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: sos-frontend
+          property: port
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: SHOPIFY_STORE_DOMAIN
+        sync: false
+      - key: SHOPIFY_STOREFRONT_ACCESS_TOKEN
+        sync: false
+      - key: SHOPIFY_API_VERSION
+        value: "2025-04"
+      - key: SENDGRID_API_KEY
+        sync: false
+
+databases:
+  - name: sos-frontend
+    ipAllowList: []
+    postgresMajorVersion: 15

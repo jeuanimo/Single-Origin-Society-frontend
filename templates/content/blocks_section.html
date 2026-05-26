@@ -1,0 +1,6 @@
+{% for block in blocks %}
+<div class="content-block">
+  {% if block.image %}<img src="{{ block.image.url }}" alt="{{ block.image_alt }}" class="content-block-img">{% endif %}
+  {% if block.body %}{{ block.body|safe }}{% endif %}
+</div>
+{% endfor %}
