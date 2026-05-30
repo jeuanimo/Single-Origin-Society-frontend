@@ -12,9 +12,12 @@
     <h2 class="section-title-md section-title-mt">Orders</h2>
     <p>Order history and tracking are managed through Shopify. Check your email for order confirmations and shipping updates.</p>
 
-    <div style="margin-top: 2rem;">
-      <a href="{% url 'storefront:shop' %}" class="btn btn-gold">Continue Shopping</a>
-      <a href="{% url 'accounts:logout' %}" class="btn btn-outline" style="margin-left: 1rem;">Sign Out</a>
+    <div class="profile-actions">
+      {% if user.is_staff %}
+      <a href="{% url 'portal:dashboard' %}" class="btn btn-gold">Staff Portal</a>
+      {% endif %}
+      <a href="{% url 'storefront:shop' %}" class="btn btn-outline">Continue Shopping</a>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-outline">Sign Out</a>
     </div>
   </div>
 </section>

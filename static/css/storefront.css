@@ -1916,3 +1916,5 @@ html, body {
     letter-spacing: 1.2px;
   }
 }
+
+.profile-actions { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
