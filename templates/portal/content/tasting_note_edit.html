@@ -1,0 +1,46 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if note %}Edit Tasting Note{% else %}New Tasting Note{% endif %}{% endblock %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if note %}Edit Tasting Note{% else %}New Tasting Note{% endif %}</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="p-card">
+    <div class="p-form-group">
+      <label for="id_product_name">Product Name</label>
+      <input id="id_product_name" name="product_name" class="p-form-control" value="{{ note.product_name|default:'' }}" placeholder="e.g. Ethiopia Natural Coffee">
+    </div>
+    <div class="p-form-group">
+      <label for="id_product_handle">Shopify Product Handle</label>
+      <input id="id_product_handle" name="product_handle" class="p-form-control" value="{{ note.product_handle|default:'' }}" placeholder="e.g. ethiopia-natural-coffee">
+    </div>
+    <div class="p-form-group">
+      <label for="id_title">Title</label>
+      <input id="id_title" name="title" class="p-form-control" value="{{ note.title|default:'' }}" required>
+    </div>
+    <div class="p-form-group">
+      <label for="id_body">Body</label>
+      <textarea id="id_body" name="body" class="p-form-control" rows="4">{{ note.body|default:'' }}</textarea>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_aroma">Aroma</label><input id="id_aroma" name="aroma" class="p-form-control" value="{{ note.aroma|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_flavor">Flavor</label><input id="id_flavor" name="flavor" class="p-form-control" value="{{ note.flavor|default:'' }}"></div>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_finish">Finish</label><input id="id_finish" name="finish" class="p-form-control" value="{{ note.finish|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_origin">Origin</label><input id="id_origin" name="origin" class="p-form-control" value="{{ note.origin|default:'' }}"></div>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_pairings">Pairings</label><input id="id_pairings" name="pairings" class="p-form-control" value="{{ note.pairings|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_style_notes">Style Notes</label><input id="id_style_notes" name="style_notes" class="p-form-control" value="{{ note.style_notes|default:'' }}"></div>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_tags">Tags</label><input id="id_tags" name="tags" class="p-form-control" value="{{ note.tags|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_rating">Rating (1–10)</label><input type="number" min="1" max="10" id="id_rating" name="rating" class="p-form-control" value="{{ note.rating|default:5 }}"></div>
+    </div>
+  </div>
+  <div class="p-form-actions">
+    <button type="submit" class="p-btn p-btn-primary">Save Tasting Note</button>
+    <a href="{% url 'portal:content_tasting_notes' %}" class="p-btn p-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

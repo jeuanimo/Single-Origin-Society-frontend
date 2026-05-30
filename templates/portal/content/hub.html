@@ -1,0 +1,22 @@
+{% extends "portal/base.html" %}
+{% block title %}Content Hub{% endblock %}
+{% block content %}
+<h2 class="p-page-title-mb">Content Hub</h2>
+<div class="p-stat-grid p-mb-24">
+  <div class="p-stat-card"><div class="p-stat-label">Pages</div><div class="p-stat-value">{{ stats.pages }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Brewing Guides</div><div class="p-stat-value">{{ stats.guides }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Tasting Notes</div><div class="p-stat-value">{{ stats.tasting_notes }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Journal Posts</div><div class="p-stat-value">{{ stats.journal_posts }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Wholesale Inquiries</div><div class="p-stat-value">{{ stats.wholesale_inquiries }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Ambassador Inquiries</div><div class="p-stat-value">{{ stats.ambassador_inquiries }}</div></div>
+</div>
+<div class="p-inline-actions">
+  <a href="{% url 'portal:content_pages' %}" class="p-btn p-btn-secondary">Pages</a>
+  <a href="{% url 'portal:content_blocks' %}" class="p-btn p-btn-secondary">Page Sections</a>
+  <a href="{% url 'portal:content_blog' %}" class="p-btn p-btn-secondary">Blog</a>
+  <a href="{% url 'portal:content_guides' %}" class="p-btn p-btn-secondary">Brewing Guides</a>
+  <a href="{% url 'portal:content_tasting_notes' %}" class="p-btn p-btn-secondary">Tasting Notes</a>
+  <a href="{% url 'portal:content_wholesale_inquiries' %}" class="p-btn p-btn-secondary">Wholesale Inquiries</a>
+  <a href="{% url 'portal:content_ambassador_inquiries' %}" class="p-btn p-btn-secondary">Ambassador Inquiries</a>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if guide %}Edit Guide{% else %}New Guide{% endif %}{% endblock %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if guide %}Edit Guide{% else %}New Guide{% endif %}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="p-card">
+    <div class="p-form-group">
+      <label for="id_title">Title</label>
+      <input id="id_title" name="title" class="p-form-control" value="{{ guide.title|default:'' }}" required>
+    </div>
+    <div class="p-form-group">
+      <label for="id_product_handle">Shopify Product Handle</label>
+      <input id="id_product_handle" name="product_handle" class="p-form-control" value="{{ guide.product_handle|default:'' }}" placeholder="e.g. ethiopia-natural-coffee">
+      <p class="p-help-text">The Shopify product handle this guide is linked to (optional).</p>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group">
+        <label for="id_guide_type">Guide Type</label>
+        <select id="id_guide_type" name="guide_type" class="p-form-control">
+          <option value="pour_over" {% if guide.guide_type == 'pour_over' %}selected{% endif %}>Pour Over</option>
+          <option value="french_press" {% if guide.guide_type == 'french_press' %}selected{% endif %}>French Press</option>
+          <option value="espresso_basics" {% if guide.guide_type == 'espresso_basics' %}selected{% endif %}>Espresso Basics</option>
+          <option value="tea_steeping" {% if guide.guide_type == 'tea_steeping' %}selected{% endif %}>Tea Steeping</option>
+          <option value="matcha_preparation" {% if guide.guide_type == 'matcha_preparation' %}selected{% endif %}>Matcha Preparation</option>
+          <option value="other" {% if guide.guide_type == 'other' or not guide %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+      <div class="p-form-group">
+        <label for="id_audience_level">Audience Level</label>
+        <select id="id_audience_level" name="audience_level" class="p-form-control">
+          <option value="beginner" {% if guide.audience_level == 'beginner' or not guide %}selected{% endif %}>Beginner</option>
+          <option value="intermediate" {% if guide.audience_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+          <option value="advanced" {% if guide.audience_level == 'advanced' %}selected{% endif %}>Advanced</option>
+        </select>
+      </div>
+    </div>
+    <div class="p-form-group">
+      <label for="id_tags">Tags</label>
+      <input id="id_tags" name="tags" class="p-form-control" value="{{ guide.tags|default:'' }}">
+    </div>
+    <div class="p-form-group">
+      <label for="id_description">Description</label>
+      <textarea id="id_description" name="description" class="p-form-control" rows="3">{{ guide.description|default:'' }}</textarea>
+    </div>
+    <div class="p-form-group">
+      <label for="id_method">Method</label>
+      <input id="id_method" name="method" class="p-form-control" value="{{ guide.method|default:'' }}">
+    </div>
+    <div class="p-form-group">
+      <label for="id_instructions">Instructions</label>
+      <textarea id="id_instructions" name="instructions" class="p-form-control" rows="5">{{ guide.instructions|default:'' }}</textarea>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_water_temp">Water Temp</label><input id="id_water_temp" name="water_temp" class="p-form-control" value="{{ guide.water_temp|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_brew_time">Brew Time</label><input id="id_brew_time" name="brew_time" class="p-form-control" value="{{ guide.brew_time|default:'' }}"></div>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_grind_size">Grind Size</label><input id="id_grind_size" name="grind_size" class="p-form-control" value="{{ guide.grind_size|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_ratio">Ratio</label><input id="id_ratio" name="ratio" class="p-form-control" value="{{ guide.ratio|default:'' }}"></div>
+    </div>
+    <div class="p-form-group">
+      <label for="id_image">Image</label>
+      <input type="file" id="id_image" name="image" class="p-form-control" accept="image/*">
+    </div>
+    <div class="p-check-group">
+      <div class="p-form-check"><input type="checkbox" id="id_is_published" name="is_published" {% if guide.is_published %}checked{% endif %}><label for="id_is_published" class="p-check-label">Published</label></div>
+      <div class="p-form-check"><input type="checkbox" id="id_is_premium_featured" name="is_premium_featured" {% if guide.is_premium_featured %}checked{% endif %}><label for="id_is_premium_featured" class="p-check-label">Premium Featured</label></div>
+    </div>
+  </div>
+  <div class="p-form-actions">
+    <button type="submit" class="p-btn p-btn-primary">Save Guide</button>
+    <a href="{% url 'portal:content_guides' %}" class="p-btn p-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

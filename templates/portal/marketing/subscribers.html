@@ -1,0 +1,24 @@
+{% extends "portal/base.html" %}
+{% block title %}Subscribers{% endblock title %}
+{% block content %}
+<h2 class="p-page-title-mb">Email Subscribers</h2>
+<div class="p-card">
+  <div class="p-card-header p-muted-header">Email Subscribers</div>
+  <table class="p-table">
+    <thead><tr><th>Email</th><th>Source</th><th>Status</th><th>Subscribed</th></tr></thead>
+    <tbody>
+      {% for sub in page_obj %}
+      <tr>
+        <td>{{ sub.email }}</td>
+        <td>{{ sub.source|default:"Website" }}</td>
+        <td>{% if sub.is_active %}<span class="badge badge-active">Active</span>{% else %}<span class="badge badge-draft">Unsubscribed</span>{% endif %}</td>
+        <td>{{ sub.subscribed_at|date:"M j, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="p-empty">No subscribers</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% include "portal/includes/pagination.html" %}
+</div>
+{% endblock content %}

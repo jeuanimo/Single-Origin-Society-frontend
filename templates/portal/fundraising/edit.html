@@ -1,0 +1,37 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if campaign %}Edit Campaign{% else %}New Fundraising Campaign{% endif %}{% endblock title %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if campaign %}Edit: {{ campaign.title }}{% else %}New Fundraising Campaign{% endif %}</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="p-card">
+    <div class="p-form-group"><label for="id_title">Title</label><input type="text" name="title" id="id_title" class="p-form-control" value="{{ campaign.title|default:'' }}" required></div>
+    <div class="p-form-group"><label for="id_description">Description</label><textarea name="description" id="id_description" class="p-form-control" rows="5">{{ campaign.description|default:'' }}</textarea></div>
+    <div class="p-form-group"><label for="id_story">Story</label><textarea name="story" id="id_story" class="p-form-control" rows="5">{{ campaign.story|default:'' }}</textarea></div>
+    <div class="p-form-group"><label for="id_beneficiary">Beneficiary</label><input type="text" name="beneficiary" id="id_beneficiary" class="p-form-control" value="{{ campaign.beneficiary|default:'' }}"></div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_goal_amount">Goal Amount</label><input type="number" step="0.01" name="goal_amount" id="id_goal_amount" class="p-form-control" value="{{ campaign.goal_amount|default:'' }}" required></div>
+      <div class="p-form-group"><label for="id_raised_amount">Raised Amount</label><input type="number" step="0.01" name="raised_amount" id="id_raised_amount" class="p-form-control" value="{{ campaign.raised_amount|default:'0' }}"></div>
+    </div>
+    <div class="p-form-row">
+      <div class="p-form-group"><label for="id_start_date">Start Date</label><input type="date" name="start_date" id="id_start_date" class="p-form-control" value="{{ campaign.start_date|date:'Y-m-d'|default:'' }}"></div>
+      <div class="p-form-group"><label for="id_end_date">End Date</label><input type="date" name="end_date" id="id_end_date" class="p-form-control" value="{{ campaign.end_date|date:'Y-m-d'|default:'' }}"></div>
+    </div>
+    <div class="p-form-group"><label for="id_image">Image</label><input type="file" name="image" id="id_image" class="p-form-control" accept="image/*">
+      {% if campaign.image %}<p class="p-image-current">Current: {{ campaign.image.name }}</p>{% endif %}
+    </div>
+    <div class="p-form-group">
+      <label for="id_status">Status</label>
+      <select name="status" id="id_status" class="p-form-control">
+        <option value="draft" {% if campaign.status == 'draft' %}selected{% endif %}>Draft</option>
+        <option value="active" {% if campaign.status == 'active' %}selected{% endif %}>Active</option>
+        <option value="completed" {% if campaign.status == 'completed' %}selected{% endif %}>Completed</option>
+      </select>
+    </div>
+  </div>
+  <div class="p-form-actions">
+    <button type="submit" class="p-btn p-btn-primary">Save Campaign</button>
+    <a href="{% url 'portal:fundraising_manage' %}" class="p-btn p-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock content %}

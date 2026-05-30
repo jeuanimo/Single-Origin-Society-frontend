@@ -1,0 +1,47 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if post %}Edit Blog Post{% else %}New Blog Post{% endif %}{% endblock title %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if post %}Edit Blog Post{% else %}New Blog Post{% endif %}</h2>
+<div class="p-card p-form-card">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="p-form-row">
+      <div>
+        <label for="id_entry_type" class="p-label">Entry Type</label>
+        <select id="id_entry_type" name="entry_type" class="p-form-control p-select-mb">
+          {% for value, label in entry_type_choices %}
+          <option value="{{ value }}" {% if post.entry_type == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="id_status" class="p-label">Status</label>
+        <select id="id_status" name="status" class="p-form-control p-select-mb">
+          {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if post.status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <label for="id_title" class="p-label">Title</label>
+    <input id="id_title" type="text" name="title" value="{{ post.title|default:'' }}" class="p-form-control p-select-mb" required>
+    <label for="id_tags" class="p-label">Tags (comma separated)</label>
+    <input id="id_tags" type="text" name="tags" value="{{ post.tags|default:'' }}" class="p-form-control p-select-mb" placeholder="slow living, morning ritual, spring">
+    <label for="id_published_at" class="p-label">Publish Date/Time</label>
+    <input id="id_published_at" type="datetime-local" name="published_at" value="{% if post.published_at %}{{ post.published_at|date:'Y-m-d\\TH:i' }}{% endif %}" class="p-form-control p-select-mb">
+    <label for="id_excerpt" class="p-label">Excerpt</label>
+    <textarea id="id_excerpt" name="excerpt" rows="2" class="p-form-control p-select-mb">{{ post.excerpt|default:'' }}</textarea>
+    <label for="id_body" class="p-label">Body</label>
+    <textarea id="id_body" name="body" rows="12" class="p-form-control p-select-mb" required>{{ post.body|default:'' }}</textarea>
+    <label for="id_image" class="p-label">Image</label>
+    <input id="id_image" type="file" name="image" class="p-form-control p-select-mb" accept="image/*">
+    {% if post.image %}
+    <p class="p-muted">Current: {{ post.image.name }}</p>
+    {% endif %}
+    <div class="p-form-actions">
+      <button type="submit" class="p-btn p-btn-primary">Save Post</button>
+      <a href="{% url 'portal:content_blog' %}" class="p-btn p-btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock content %}

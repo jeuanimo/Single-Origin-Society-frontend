@@ -1,0 +1,52 @@
+{% extends "portal/base.html" %}
+{% block title %}Fundraising{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Fundraising Campaigns</h2>
+  <a href="{% url 'portal:fundraising_new' %}" class="p-btn p-btn-primary">+ New Campaign</a>
+</div>
+
+<div class="p-stat-grid p-mb-24">
+  <div class="p-stat-card"><div class="p-stat-label">Active</div><div class="p-stat-value">{{ stats.active }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Draft</div><div class="p-stat-value">{{ stats.draft }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Total Goal</div><div class="p-stat-value">${{ stats.total_goal }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Total Raised</div><div class="p-stat-value">${{ stats.total_raised }}</div></div>
+</div>
+
+<div class="p-card p-mb-24">
+  <div class="p-card-header"><h2>Operations Queue</h2></div>
+  <div class="p-inline-tags">
+    {% for label in placeholders %}
+    <span class="badge badge-secondary">{{ label }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Campaign</th><th>Goal</th><th>Raised</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for campaign in campaigns %}
+      <tr>
+        <td><strong>{{ campaign.title }}</strong></td>
+        <td>${{ campaign.goal_amount }}</td>
+        <td>${{ campaign.raised_amount }}</td>
+        <td>
+          <div class="p-progress-bar">
+            <div class="p-progress-fill" style="width: {{ campaign.percent_raised }}%;"></div>
+          </div>
+          <span class="p-progress-text">{{ campaign.percent_raised }}%</span>
+        </td>
+        <td><span class="badge badge-{{ campaign.status }}">{{ campaign.get_status_display }}</span></td>
+        <td class="actions">
+          <a href="{% url 'portal:fundraising_edit' campaign.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a>
+          <a href="{% url 'portal:fundraising_donations' campaign.pk %}" class="p-btn p-btn-secondary p-btn-sm">Donations</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="p-empty">No campaigns</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

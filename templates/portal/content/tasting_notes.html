@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% block title %}Tasting Notes{% endblock %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Tasting Notes</h2>
+  <a href="{% url 'portal:content_tasting_note_new' %}" class="p-btn p-btn-primary">+ New Tasting Note</a>
+</div>
+<form method="get" class="p-inline-form p-mb-16">
+  <input type="search" name="q" value="{{ search_query }}" class="p-form-control" placeholder="Search notes...">
+  <button type="submit" class="p-btn p-btn-secondary">Search</button>
+</form>
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Title</th><th>Product</th><th>Origin</th><th>Rating</th><th>Tags</th><th></th></tr></thead>
+    <tbody>
+      {% for note in notes %}
+      <tr>
+        <td>{{ note.title }}</td>
+        <td>{{ note.product_name|default:"—" }}</td>
+        <td>{{ note.origin|default:"—" }}</td>
+        <td>{{ note.rating }}</td>
+        <td>{{ note.tags|default:"—" }}</td>
+        <td class="actions"><a href="{% url 'portal:content_tasting_note_edit' note.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="p-empty">No tasting notes found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

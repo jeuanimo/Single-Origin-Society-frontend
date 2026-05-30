@@ -1,0 +1,91 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if content_block %}Edit Content Block{% else %}New Content Block{% endif %}{% endblock title %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if content_block %}Edit: {{ content_block.label }}{% else %}New Content Block{% endif %}</h2>
+
+<div class="p-card p-mb-16 p-callout-card">
+  <p class="p-muted p-no-margin"><strong>How it works:</strong> Choose the page and enter the section key that matches the slot in the template. Add HTML text, an image, or both. Set the block to <em>Active</em> to make it live on the site immediately.</p>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="p-card p-form-card">
+
+    <div class="p-form-group">
+      <label for="id_label" class="p-label">Block Label <span class="p-required">*</span></label>
+      <input id="id_label" type="text" name="label" value="{{ content_block.label|default:'' }}" class="p-form-control" placeholder="e.g. About Page — Hero Image" required>
+      <p class="p-help-text">Internal name. Not shown to site visitors.</p>
+    </div>
+
+    <div class="p-form-row">
+      <div class="p-form-group">
+        <label for="id_page_key" class="p-label">Page <span class="p-required">*</span></label>
+        <select id="id_page_key" name="page_key" class="p-form-control" required>
+          {% for value, label in page_choices %}
+          <option value="{{ value }}" {% if content_block.page_key == value %}selected{% elif not content_block and value == "home" %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="p-form-group">
+        <label for="id_section_key" class="p-label">Section Key <span class="p-required">*</span></label>
+        <input id="id_section_key" type="text" name="section_key" value="{{ content_block.section_key|default:'' }}" class="p-form-control" placeholder="e.g. intro, hero_text, banner_1" required>
+        <p class="p-help-text">Must match the slot name in the page template. See the <a href="{% url 'portal:content_blocks' %}">reference table</a>.</p>
+      </div>
+    </div>
+
+    <div class="p-form-group">
+      <label for="id_sort_order" class="p-label">Sort Order</label>
+      <input id="id_sort_order" type="number" name="sort_order" value="{{ content_block.sort_order|default:0 }}" class="p-form-control p-number-small" min="0">
+      <p class="p-help-text">If multiple blocks share the same section key, lower numbers appear first.</p>
+    </div>
+
+    <hr class="p-divider">
+
+    <h3 class="p-section-title">Content</h3>
+
+    <div class="p-form-group">
+      <label for="id_image" class="p-label">Image</label>
+      <input id="id_image" type="file" name="image" class="p-form-control" accept="image/*">
+      {% if content_block.image %}
+      <p class="p-muted p-mt-8">
+        <strong>Current image:</strong>
+        <a href="{{ content_block.image.url }}" target="_blank" rel="noopener noreferrer">{{ content_block.image.name }}</a>
+      </p>
+      <label class="p-form-check p-top-gap-4">
+        <input type="checkbox" name="clear_image" value="on"> Remove current image
+      </label>
+      {% endif %}
+    </div>
+
+    <div class="p-form-group">
+      <label for="id_image_alt" class="p-label">Image Alt Text</label>
+      <input id="id_image_alt" type="text" name="image_alt" value="{{ content_block.image_alt|default:'' }}" class="p-form-control" placeholder="Describe the image for accessibility">
+    </div>
+
+    <div class="p-form-group">
+      <label for="id_body" class="p-label">Text / HTML Content</label>
+      <textarea id="id_body" name="body" rows="12" class="p-form-control" style="font-family:monospace;font-size:13px;" placeholder="Enter HTML here. Examples:&#10;&lt;p&gt;Your paragraph text&lt;/p&gt;&#10;&lt;h2&gt;Section heading&lt;/h2&gt;&#10;&lt;img src=&quot;/media/...&quot; alt=&quot;&quot;&gt;">{{ block.body|default:'' }}</textarea>
+      <p class="p-help-text">Accepts HTML. Use <code>&lt;p&gt;</code>, <code>&lt;h2&gt;</code>–<code>&lt;h4&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;a href="..."&gt;</code>, <code>&lt;ul&gt;/&lt;li&gt;</code>, <code>&lt;img&gt;</code>. The uploaded image above is rendered <em>before</em> this text.</p>
+    </div>
+
+    <hr class="p-divider">
+
+    <div class="p-form-check">
+      <input type="checkbox" name="is_active" id="id_is_active" value="on" {% if content_block.is_active or not content_block %}checked{% endif %}>
+      <label for="id_is_active">Active (visible on the site)</label>
+    </div>
+
+  </div>
+
+  <div class="p-form-actions">
+    <button type="submit" class="p-btn p-btn-primary">Save Block</button>
+    <a href="{% url 'portal:content_blocks' %}" class="p-btn p-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% if content_block %}
+<form method="post" action="{% url 'portal:content_block_delete' content_block.pk %}" class="p-form-actions" onsubmit="return confirm('Delete this block permanently?');">
+  {% csrf_token %}
+  <button type="submit" class="p-btn p-btn-danger">Delete Block</button>
+</form>
+{% endif %}
+{% endblock content %}

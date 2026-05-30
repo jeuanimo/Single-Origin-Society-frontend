@@ -1,0 +1,65 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="p-page-title-mb">Dashboard</h2>
+
+<div class="p-stat-grid p-mb-24">
+  <div class="p-stat-card"><div class="p-stat-label">Published Posts</div><div class="p-stat-value">{{ stats.blog_posts }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Brewing Guides</div><div class="p-stat-value">{{ stats.brewing_guides }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Tasting Notes</div><div class="p-stat-value">{{ stats.tasting_notes }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Pages</div><div class="p-stat-value">{{ stats.pages }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Subscribers</div><div class="p-stat-value">{{ stats.subscribers|intcomma }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Wholesale Inquiries</div><div class="p-stat-value">{{ stats.wholesale_inquiries }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Ambassador Inquiries</div><div class="p-stat-value">{{ stats.ambassador_inquiries }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Fundraising Raised</div><div class="p-stat-value p-color-gold">${{ stats.fundraising_raised|floatformat:0|intcomma }}</div></div>
+</div>
+
+<div class="p-grid-2col p-mb-24">
+  <div class="p-card">
+    <div class="p-card-header"><h2>Recent Blog Posts</h2><a href="{% url 'portal:content_blog' %}" class="p-btn p-btn-secondary p-btn-sm">View All</a></div>
+    <table class="p-table">
+      <thead><tr><th>Title</th><th>Status</th><th>Updated</th></tr></thead>
+      <tbody>
+        {% for post in recent_posts %}
+        <tr>
+          <td><a href="{% url 'portal:content_blog_edit' post.pk %}">{{ post.title }}</a></td>
+          <td><span class="badge badge-{{ post.status }}">{{ post.get_status_display }}</span></td>
+          <td>{{ post.updated_at|date:"M j" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="p-empty">No posts yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-card">
+    <div class="p-card-header"><h2>Recent Wholesale Inquiries</h2><a href="{% url 'portal:content_wholesale_inquiries' %}" class="p-btn p-btn-secondary p-btn-sm">View All</a></div>
+    <table class="p-table">
+      <thead><tr><th>Company</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for inq in recent_wholesale %}
+        <tr>
+          <td><a href="{% url 'portal:content_wholesale_inquiry_detail' inq.pk %}">{{ inq.company_name }}</a></td>
+          <td>{{ inq.created_at|date:"M j" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="2" class="p-empty">No inquiries yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="p-card">
+  <div class="p-card-header"><h2>Quick Links</h2></div>
+  <div class="p-inline-actions">
+    <a href="{% url 'portal:content_blog_new' %}" class="p-btn p-btn-primary p-btn-sm">+ New Blog Post</a>
+    <a href="{% url 'portal:content_guide_new' %}" class="p-btn p-btn-secondary p-btn-sm">+ New Brewing Guide</a>
+    <a href="{% url 'portal:content_tasting_note_new' %}" class="p-btn p-btn-secondary p-btn-sm">+ New Tasting Note</a>
+    <a href="{% url 'portal:fundraising_new' %}" class="p-btn p-btn-secondary p-btn-sm">+ New Campaign</a>
+    <a href="{% url 'portal:content_hub' %}" class="p-btn p-btn-secondary p-btn-sm">Content Hub</a>
+  </div>
+</div>
+{% endblock %}

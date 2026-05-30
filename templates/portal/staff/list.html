@@ -1,0 +1,27 @@
+{% extends "portal/base.html" %}
+{% block title %}Staff{% endblock %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Staff Members</h2>
+  <a href="{% url 'admin:accounts_user_add' %}" class="p-btn p-btn-primary">+ Add Staff</a>
+</div>
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Superuser</th><th>Active</th><th></th></tr></thead>
+    <tbody>
+      {% for member in staff_members %}
+      <tr>
+        <td>{{ member.get_full_name|default:"—" }}</td>
+        <td>{{ member.username }}</td>
+        <td>{{ member.email }}</td>
+        <td>{% if member.is_superuser %}<span class="badge badge-active">Yes</span>{% else %}—{% endif %}</td>
+        <td>{% if member.is_active %}<span class="badge badge-active">Active</span>{% else %}<span class="badge badge-draft">Inactive</span>{% endif %}</td>
+        <td class="actions"><a href="{% url 'admin:accounts_user_change' member.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="p-empty">No staff members</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

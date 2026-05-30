@@ -1,0 +1,55 @@
+{% extends "portal/base.html" %}
+{% block title %}Content Pages{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Content Pages</h2>
+  <div class="actions">
+    <a href="{% url 'portal:content_hub' %}" class="p-btn p-btn-secondary">Content Hub</a>
+    <a href="{% url 'portal:content_page_new' %}" class="p-btn p-btn-primary">+ New Page</a>
+  </div>
+</div>
+<div class="p-inline-actions p-mb-16">
+  <a href="{% url 'portal:content_guides' %}" class="p-btn p-btn-secondary p-btn-sm">Brewing Guides</a>
+  <a href="{% url 'portal:content_tasting_notes' %}" class="p-btn p-btn-secondary p-btn-sm">Tasting Notes</a>
+  <a href="{% url 'portal:content_journal_posts' %}" class="p-btn p-btn-secondary p-btn-sm">Ritual Journal</a>
+  <a href="{% url 'portal:content_wholesale_inquiries' %}" class="p-btn p-btn-secondary p-btn-sm">Wholesale Inquiries</a>
+  <a href="{% url 'portal:content_ambassador_inquiries' %}" class="p-btn p-btn-secondary p-btn-sm">Ambassador Inquiries</a>
+</div>
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+    <tbody>
+      {% for page in pages %}
+      <tr>
+        <td><strong>{{ page.title }}</strong></td>
+        <td class="p-slug">/{{ page.slug }}</td>
+        <td>{% if page.is_published %}<span class="badge badge-active">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}</td>
+        <td>{{ page.updated_at|date:"M j, Y" }}</td>
+        <td class="actions"><a href="{% url 'portal:content_page_edit' page.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="p-empty">No pages</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2 class="p-page-title p-mt-24 p-mb-24">Blog Posts</h2>
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Title</th><th>Author</th><th>Status</th><th>Published</th></tr></thead>
+    <tbody>
+      {% for post in blog_posts %}
+      <tr>
+        <td><strong>{{ post.title }}</strong></td>
+        <td>{{ post.author.get_full_name|default:post.author.username }}</td>
+        <td>{% if post.is_published %}<span class="badge badge-active">Published</span>{% else %}<span class="badge badge-draft">Draft</span>{% endif %}</td>
+        <td>{{ post.published_at|date:"M j, Y"|default:"—" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="p-empty">No blog posts</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

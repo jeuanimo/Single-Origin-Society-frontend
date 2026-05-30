@@ -1,0 +1,63 @@
+<nav class="portal-sidebar" id="portalSidebar">
+  <div class="sidebar-brand">Single Origin <span>Society</span></div>
+  <div class="sidebar-nav" data-portal-nav-links>
+    {% if request.user.is_staff %}
+    <div class="sidebar-section">Main</div>
+    <a href="{% url 'portal:dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <span class="icon">◉</span> Dashboard
+    </a>
+
+    <div class="sidebar-section">Content</div>
+    <a href="{% url 'portal:content_hub' %}" class="sidebar-link {% if request.resolver_match.url_name == 'content_hub' %}active{% endif %}">
+      <span class="icon">▥</span> Content Hub
+    </a>
+    <a href="{% url 'portal:content_pages' %}" class="sidebar-link {% if 'content_page' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">▤</span> Pages
+    </a>
+    <a href="{% url 'portal:content_blocks' %}" class="sidebar-link {% if 'content_block' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">⊞</span> Page Sections
+    </a>
+    <a href="{% url 'portal:content_blog' %}" class="sidebar-link {% if 'content_blog' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">▧</span> Blog
+    </a>
+    <a href="{% url 'portal:content_guides' %}" class="sidebar-link {% if 'content_guide' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">☕</span> Brewing Guides
+    </a>
+    <a href="{% url 'portal:content_tasting_notes' %}" class="sidebar-link {% if 'content_tasting_note' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">◍</span> Tasting Notes
+    </a>
+    <a href="{% url 'portal:content_wholesale_inquiries' %}" class="sidebar-link {% if 'content_wholesale' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">▣</span> Wholesale Inquiries
+    </a>
+    <a href="{% url 'portal:content_ambassador_inquiries' %}" class="sidebar-link {% if 'content_ambassador' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">✶</span> Ambassador Inquiries
+    </a>
+
+    <div class="sidebar-section">Impact</div>
+    <a href="{% url 'portal:fundraising_manage' %}" class="sidebar-link {% if 'fundraising' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">♥</span> Fundraising
+    </a>
+
+    <div class="sidebar-section">Growth</div>
+    <a href="{% url 'portal:subscriber_list' %}" class="sidebar-link {% if 'subscriber' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">✉</span> Subscribers
+    </a>
+
+    {% if request.user.is_superuser %}
+    <div class="sidebar-section">Admin</div>
+    <a href="{% url 'portal:staff_list' %}" class="sidebar-link {% if 'staff' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">◑</span> Staff
+    </a>
+    <a href="{% url 'admin:index' %}" class="sidebar-link">
+      <span class="icon">⚙</span> Django Admin
+    </a>
+    {% endif %}
+
+    {% endif %}
+
+    <div class="sidebar-section p-sidebar-spacer"></div>
+    <a href="{% url 'storefront:home' %}" class="sidebar-link">
+      <span class="icon">←</span> View Storefront
+    </a>
+  </div>
+</nav>

@@ -1,0 +1,60 @@
+{% extends "portal/base.html" %}
+{% block title %}Wholesale Inquiry{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Wholesale Inquiry</h2>
+  <a href="{% url 'portal:content_wholesale_inquiries' %}" class="p-btn p-btn-secondary p-btn-sm">Back to List</a>
+</div>
+
+<div class="p-grid-2col">
+  <div class="p-card">
+    <h3 class="p-page-title">{{ inquiry.company_name }}</h3>
+    <p><strong>Contact:</strong> {{ inquiry.name }} ({{ inquiry.email }})</p>
+    <p><strong>Phone:</strong> {{ inquiry.phone|default:"—" }}</p>
+    <p><strong>Website:</strong> {{ inquiry.website|default:"—" }}</p>
+    <p><strong>Location:</strong> {{ inquiry.location|default:"—" }}</p>
+    <p><strong>Volume:</strong> {{ inquiry.monthly_volume|default:"—" }}</p>
+    <p><strong>Public Notes:</strong> {{ inquiry.notes|default:"—" }}</p>
+    <p><strong>Assigned:</strong> {{ inquiry.assigned_to.get_full_name|default:"—" }}</p>
+    <p><strong>Reviewed:</strong> {% if inquiry.reviewed_at %}{{ inquiry.reviewed_at|date:"M j, Y g:i A" }} by {{ inquiry.reviewed_by.get_full_name|default:inquiry.reviewed_by.username }}{% else %}No{% endif %}</p>
+  </div>
+
+  <div class="p-card">
+    <h3 class="p-page-title">Actions</h3>
+    <form method="post" class="p-mb-24">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="mark_reviewed">
+      <button type="submit" class="p-btn p-btn-primary p-btn-sm">Mark Reviewed</button>
+    </form>
+
+    <form method="post" class="p-mb-24">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="assign">
+      <label class="p-label" for="id_assign-assigned_to">Assign Owner</label>
+      {{ assign_form.assigned_to }}
+      <button type="submit" class="p-btn p-btn-secondary p-btn-sm p-mt-12">Save Assignment</button>
+    </form>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_note">
+      <label class="p-label" for="id_note-note">Internal Note</label>
+      {{ note_form.note }}
+      <button type="submit" class="p-btn p-btn-secondary p-btn-sm p-mt-12">Add Note</button>
+    </form>
+  </div>
+</div>
+
+<div class="p-card p-mt-24">
+  <h3 class="p-page-title">Internal Notes</h3>
+  {% for note in notes %}
+  <div class="p-list-row-sm">
+    <strong>{{ note.author.get_full_name|default:note.author.username|default:"System" }}</strong>
+    <span class="p-muted">{{ note.created_at|date:"M j, Y g:i A" }}</span>
+    <div>{{ note.body }}</div>
+  </div>
+  {% empty %}
+  <p class="p-muted">No internal notes yet.</p>
+  {% endfor %}
+</div>
+{% endblock content %}

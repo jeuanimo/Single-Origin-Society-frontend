@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Portal{% endblock title %} · SOS Portal</title>
+  <link rel="icon" type="image/png" href="{% static 'images/soslogo.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+</head>
+<body class="portal-body">
+  <div class="portal-layout">
+    {% include "portal/includes/sidebar.html" %}
+    <div class="portal-main">
+      {% include "portal/includes/topbar.html" %}
+      {% if messages %}
+      <div class="portal-messages">
+        {% for message in messages %}
+        <div class="p-message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="portal-content">
+        <div class="portal-page-shell">
+          {% block content %}{% endblock content %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="portal-nav-overlay" data-portal-nav-overlay aria-label="Close navigation"></button>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script>
+    (function () {
+      var body = document.body;
+      var toggle = document.querySelector('[data-portal-nav-toggle]');
+      var overlay = document.querySelector('[data-portal-nav-overlay]');
+      var linkContainer = document.querySelector('[data-portal-nav-links]');
+      var smallScreenQuery = window.matchMedia('(max-width: 1024px)');
+      if (!toggle || !overlay) return;
+      var syncToggleState = function () {
+        var isVisible = smallScreenQuery.matches ? body.classList.contains('portal-nav-open') : !body.classList.contains('portal-nav-collapsed');
+        toggle.setAttribute('aria-expanded', isVisible ? 'true' : 'false');
+        toggle.setAttribute('aria-label', isVisible ? 'Close navigation' : 'Open navigation');
+      };
+      toggle.addEventListener('click', function () {
+        if (smallScreenQuery.matches) { body.classList.toggle('portal-nav-open'); }
+        else { body.classList.toggle('portal-nav-collapsed'); }
+        syncToggleState();
+      });
+      overlay.addEventListener('click', function () { body.classList.remove('portal-nav-open'); syncToggleState(); });
+      if (linkContainer) {
+        linkContainer.addEventListener('click', function (e) {
+          if (smallScreenQuery.matches && e.target && e.target.closest('a')) { body.classList.remove('portal-nav-open'); syncToggleState(); }
+        });
+      }
+      syncToggleState();
+    })();
+  </script>
+</body>
+</html>

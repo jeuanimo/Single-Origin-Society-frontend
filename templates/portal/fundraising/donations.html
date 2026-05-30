@@ -1,0 +1,32 @@
+{% extends "portal/base.html" %}
+{% block title %}Donations — {{ campaign.title }}{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Donations: {{ campaign.title }}</h2>
+  <a href="{% url 'portal:fundraising_manage' %}" class="p-btn p-btn-secondary">Back to Campaigns</a>
+</div>
+<div class="p-stat-grid p-mb-24">
+  <div class="p-stat-card"><div class="p-stat-label">Goal</div><div class="p-stat-value">${{ campaign.goal_amount }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Raised</div><div class="p-stat-value p-color-gold">${{ campaign.raised_amount }}</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Progress</div><div class="p-stat-value">{{ campaign.percent_raised }}%</div></div>
+  <div class="p-stat-card"><div class="p-stat-label">Donors</div><div class="p-stat-value">{{ donations.count }}</div></div>
+</div>
+<div class="p-card">
+  <table class="p-table">
+    <thead><tr><th>Donor</th><th>Email</th><th>Amount</th><th>Date</th><th>Message</th></tr></thead>
+    <tbody>
+      {% for d in donations %}
+      <tr>
+        <td>{{ d.donor_name|default:"Anonymous" }}</td>
+        <td>{{ d.donor_email|default:"—" }}</td>
+        <td>${{ d.amount }}</td>
+        <td>{{ d.created_at|date:"M j, Y" }}</td>
+        <td>{{ d.message|truncatewords:10|default:"—" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="p-empty">No donations yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

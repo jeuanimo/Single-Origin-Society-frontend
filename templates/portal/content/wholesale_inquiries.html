@@ -1,0 +1,69 @@
+{% extends "portal/base.html" %}
+{% block title %}Wholesale Inquiries{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Wholesale Inquiries</h2>
+  <div class="actions">
+    <a href="?q={{ search_query }}&from_date={{ from_date }}&to_date={{ to_date }}&export=csv" class="p-btn p-btn-secondary p-btn-sm">Export CSV</a>
+    <a href="{% url 'portal:content_hub' %}" class="p-btn p-btn-secondary p-btn-sm">Back to Content Hub</a>
+  </div>
+</div>
+
+<div class="p-card p-form-card p-mb-12">
+  <form method="get" class="p-form-row">
+    <div>
+      <label for="id_wholesale_search" class="p-label">Search</label>
+      <input id="id_wholesale_search" type="text" name="q" value="{{ search_query }}" class="p-form-control" placeholder="Name, email, company, location">
+    </div>
+    <div>
+      <label for="id_wholesale_from" class="p-label">From</label>
+      <input id="id_wholesale_from" type="date" name="from_date" value="{{ from_date }}" class="p-form-control">
+    </div>
+    <div>
+      <label for="id_wholesale_to" class="p-label">To</label>
+      <input id="id_wholesale_to" type="date" name="to_date" value="{{ to_date }}" class="p-form-control">
+    </div>
+    <div class="p-actions-right">
+      <button type="submit" class="p-btn p-btn-secondary p-btn-sm">Filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="p-card">
+  <table class="p-table">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th>Company</th>
+        <th>Contact</th>
+        <th>Location</th>
+        <th>Monthly Volume</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inquiry in page_obj %}
+      <tr>
+        <td>{{ inquiry.created_at|date:"M j, Y" }}</td>
+        <td><strong>{{ inquiry.company_name }}</strong></td>
+        <td>
+          {{ inquiry.name }}<br>
+          <a href="mailto:{{ inquiry.email }}">{{ inquiry.email }}</a>
+          {% if inquiry.phone %}<br>{{ inquiry.phone }}{% endif %}
+          {% if inquiry.website %}<br><a href="{{ inquiry.website }}" target="_blank" rel="noopener">Website</a>{% endif %}
+        </td>
+        <td>{{ inquiry.location|default:"—" }}</td>
+        <td>{{ inquiry.monthly_volume|default:"—" }}</td>
+        <td>{{ inquiry.notes|truncatechars:140|default:"—" }}</td>
+        <td class="actions"><a href="{% url 'portal:content_wholesale_inquiry_detail' inquiry.pk %}" class="p-btn p-btn-secondary p-btn-sm">View</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="p-empty">No wholesale inquiries found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "portal/includes/pagination.html" %}
+{% endblock content %}

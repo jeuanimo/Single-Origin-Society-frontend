@@ -1,0 +1,12 @@
+<div class="portal-topbar">
+  <button type="button" class="portal-nav-toggle" data-portal-nav-toggle aria-label="Open navigation" aria-expanded="false" aria-controls="portalSidebar">
+    <span aria-hidden="true">☰</span>
+    <span class="portal-nav-toggle-label">Menu</span>
+  </button>
+  <h1>{% block page_title %}Staff Portal{% endblock page_title %}</h1>
+  <div class="topbar-actions">
+    <span class="p-topbar-user">{{ request.user.get_full_name|default:request.user.username }}</span>
+    <a href="{% url 'storefront:home' %}" class="p-btn p-btn-secondary p-btn-sm">Main Site</a>
+    <a href="{% url 'accounts:logout' %}" class="p-btn p-btn-secondary p-btn-sm">Logout</a>
+  </div>
+</div>

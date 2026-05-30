@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "fundraising",   # Campaigns + donations
     "marketing",     # EmailSubscriber list
     "services",      # Background task worker
+    "portal",
 ]
 
 MIDDLEWARE = [

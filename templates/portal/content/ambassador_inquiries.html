@@ -1,0 +1,71 @@
+{% extends "portal/base.html" %}
+{% block title %}Ambassador Inquiries{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Ambassador Inquiries</h2>
+  <div class="actions">
+    <a href="?q={{ search_query }}&platform={{ platform_query }}&from_date={{ from_date }}&to_date={{ to_date }}&export=csv" class="p-btn p-btn-secondary p-btn-sm">Export CSV</a>
+    <a href="{% url 'portal:content_hub' %}" class="p-btn p-btn-secondary p-btn-sm">Back to Content Hub</a>
+  </div>
+</div>
+
+<div class="p-card p-form-card p-mb-12">
+  <form method="get" class="p-form-row">
+    <div>
+      <label for="id_ambassador_search" class="p-label">Search</label>
+      <input id="id_ambassador_search" type="text" name="q" value="{{ search_query }}" class="p-form-control" placeholder="Name, email, handle, city">
+    </div>
+    <div>
+      <label for="id_ambassador_platform" class="p-label">Platform</label>
+      <input id="id_ambassador_platform" type="text" name="platform" value="{{ platform_query }}" class="p-form-control" placeholder="Instagram, YouTube, TikTok">
+    </div>
+    <div>
+      <label for="id_ambassador_from" class="p-label">From</label>
+      <input id="id_ambassador_from" type="date" name="from_date" value="{{ from_date }}" class="p-form-control">
+    </div>
+    <div>
+      <label for="id_ambassador_to" class="p-label">To</label>
+      <input id="id_ambassador_to" type="date" name="to_date" value="{{ to_date }}" class="p-form-control">
+    </div>
+    <div class="p-actions-right">
+      <button type="submit" class="p-btn p-btn-secondary p-btn-sm">Filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="p-card">
+  <table class="p-table">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th>Name</th>
+        <th>Contact</th>
+        <th>Platform</th>
+        <th>Audience</th>
+        <th>Pitch</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inquiry in page_obj %}
+      <tr>
+        <td>{{ inquiry.created_at|date:"M j, Y" }}</td>
+        <td><strong>{{ inquiry.name }}</strong><br>{{ inquiry.city|default:"—" }}</td>
+        <td>
+          <a href="mailto:{{ inquiry.email }}">{{ inquiry.email }}</a><br>
+          {{ inquiry.social_handle }}
+        </td>
+        <td>{{ inquiry.primary_platform }}</td>
+        <td>{{ inquiry.audience_size|default:"—" }}</td>
+        <td>{{ inquiry.pitch|truncatechars:140|default:"—" }}</td>
+        <td class="actions"><a href="{% url 'portal:content_ambassador_inquiry_detail' inquiry.pk %}" class="p-btn p-btn-secondary p-btn-sm">View</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="p-empty">No ambassador inquiries found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "portal/includes/pagination.html" %}
+{% endblock content %}

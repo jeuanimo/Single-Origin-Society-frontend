@@ -1,0 +1,64 @@
+{% extends "portal/base.html" %}
+{% block title %}Blog Posts{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Blog Posts</h2>
+  <a href="{% url 'portal:content_blog_new' %}" class="p-btn p-btn-primary p-btn-sm">New Post</a>
+</div>
+<div class="p-card p-form-card p-mb-12">
+  <form method="get" class="p-form-row">
+    <div>
+      <label for="id_blog_search" class="p-label">Search</label>
+      <input id="id_blog_search" type="text" name="q" value="{{ search_query }}" class="p-form-control" placeholder="Title, excerpt, tags">
+    </div>
+    <div>
+      <label for="id_blog_status" class="p-label">Status</label>
+      <select id="id_blog_status" name="status" class="p-form-control">
+        <option value="">All</option>
+        {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="p-actions-right">
+      <button type="submit" class="p-btn p-btn-secondary p-btn-sm">Filter</button>
+    </div>
+  </form>
+</div>
+<div class="p-card">
+  <table class="p-table">
+    <thead>
+      <tr><th>Title</th><th>Type</th><th>Author</th><th>Status</th><th>Published</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td><strong>{{ post.title }}</strong></td>
+        <td>{{ post.get_entry_type_display }}</td>
+        <td>{{ post.author.get_full_name|default:"—" }}</td>
+        <td>
+          <span class="badge badge-{{ post.status }}">{{ post.get_status_display }}</span>
+        </td>
+        <td>{{ post.published_at|date:"M j, Y"|default:"—" }}</td>
+        <td class="actions">
+          <a href="{% url 'portal:content_blog_edit' post.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a>
+          {% if post.status != 'published' %}
+          <form method="post" action="{% url 'portal:content_blog_status' post.pk 'publish' %}" class="p-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="p-btn p-btn-primary p-btn-sm">Publish</button>
+          </form>
+          {% else %}
+          <form method="post" action="{% url 'portal:content_blog_status' post.pk 'unpublish' %}" class="p-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="p-btn p-btn-secondary p-btn-sm">Unpublish</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="p-empty">No blog posts</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

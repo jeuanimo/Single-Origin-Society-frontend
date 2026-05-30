@@ -1,0 +1,96 @@
+{% extends "portal/base.html" %}
+{% block title %}Page Content Blocks{% endblock title %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Page Content Blocks</h2>
+  <div class="actions">
+    <a href="{% url 'portal:content_hub' %}" class="p-btn p-btn-secondary">Content Hub</a>
+    <a href="{% url 'portal:content_block_new' %}" class="p-btn p-btn-primary">+ New Block</a>
+  </div>
+</div>
+
+<div class="p-card p-mb-16">
+  <p class="p-muted p-no-margin">Content blocks let you add or replace text and images on any storefront page. Each block is placed by its <strong>Page</strong> and <strong>Section Key</strong> — the section key must match the slot defined in the page template.</p>
+</div>
+
+<form method="get" class="p-inline-actions p-mb-16">
+  <label for="id_page_filter" class="p-label p-inline-label">Filter by page:</label>
+  <select id="id_page_filter" name="page_key" class="p-form-control p-select-inline" onchange="this.form.submit()">
+    <option value="">All pages</option>
+    {% for value, label in page_choices %}
+    <option value="{{ value }}" {% if page_filter == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  {% if page_filter %}<a href="{% url 'portal:content_blocks' %}" class="p-btn p-btn-secondary p-btn-sm">Clear</a>{% endif %}
+</form>
+
+<div class="p-card">
+  <table class="p-table">
+    <thead>
+      <tr>
+        <th>Label</th>
+        <th>Page</th>
+        <th>Section Key</th>
+        <th>Has Text</th>
+        <th>Has Image</th>
+        <th>Status</th>
+        <th>Updated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for block in blocks %}
+      <tr>
+        <td><strong>{{ block.label }}</strong></td>
+        <td>{{ block.get_page_key_display }}</td>
+        <td><code>{{ block.section_key }}</code></td>
+        <td>{% if block.body %}<span class="badge badge-active">Yes</span>{% else %}—{% endif %}</td>
+        <td>{% if block.image %}<span class="badge badge-active">Yes</span>{% else %}—{% endif %}</td>
+        <td>{% if block.is_active %}<span class="badge badge-active">Active</span>{% else %}<span class="badge badge-draft">Inactive</span>{% endif %}</td>
+        <td>{{ block.updated_at|date:"M j, Y" }}</td>
+        <td class="actions">
+          <a href="{% url 'portal:content_block_edit' block.pk %}" class="p-btn p-btn-secondary p-btn-sm">Edit</a>
+          {% if block.page_editor_url %}
+          <a href="{{ block.page_editor_url }}" class="p-btn p-btn-secondary p-btn-sm">Page Editor</a>
+          {% endif %}
+          {% if block.live_url %}
+          <a href="{{ block.live_url }}" class="p-btn p-btn-secondary p-btn-sm" target="_blank" rel="noopener noreferrer">Open Page</a>
+          {% endif %}
+          <form method="post" action="{% url 'portal:content_block_delete' block.pk %}" class="p-inline-form" onsubmit="return confirm('Delete this block?');">
+            {% csrf_token %}
+            <button type="submit" class="p-btn p-btn-danger p-btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="p-empty">No content blocks yet. <a href="{% url 'portal:content_block_new' %}">Create the first one →</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="p-card p-mt-24">
+  <h3 class="p-section-title p-no-top-margin">Available Page Slots</h3>
+  <p class="p-muted">Use these section keys to target the correct slot on each page.</p>
+  <table class="p-table">
+    <thead><tr><th>Page</th><th>Section Key</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>Home</td><td><code>hero_text</code></td><td>Replaces the hero headline and paragraph</td></tr>
+      <tr><td>Home</td><td><code>intro</code></td><td>Extra content block below the hero</td></tr>
+      <tr><td>Home</td><td><code>banner_1</code></td><td>First custom banner below featured products</td></tr>
+      <tr><td>Home</td><td><code>banner_2</code></td><td>Second custom banner</td></tr>
+      <tr><td>About</td><td><code>intro</code></td><td>Replaces the about page introduction paragraphs</td></tr>
+      <tr><td>About</td><td><code>values</code></td><td>Custom block in the values section</td></tr>
+      <tr><td>About</td><td><code>hero_image</code></td><td>Image displayed in the page hero area</td></tr>
+      <tr><td>Contact</td><td><code>intro</code></td><td>Text above the contact form</td></tr>
+      <tr><td>Policies</td><td><code>refunds</code></td><td>Return &amp; refund policy text</td></tr>
+      <tr><td>Policies</td><td><code>privacy</code></td><td>Privacy policy text</td></tr>
+      <tr><td>Policies</td><td><code>shipping</code></td><td>Shipping policy text</td></tr>
+      <tr><td>Brewing Guides</td><td><code>intro</code></td><td>Introductory text above the guides list</td></tr>
+      <tr><td>Ritual</td><td><code>intro</code></td><td>Introductory text on the ritual page</td></tr>
+      <tr><td>Shop</td><td><code>banner</code></td><td>Full-width banner above the product grid</td></tr>
+      <tr><td>Any</td><td><em>your-custom-key</em></td><td>Any section key you define and add to a template</td></tr>
+    </tbody>
+  </table>
+</div>
+{% endblock content %}
