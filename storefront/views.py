@@ -77,7 +77,7 @@ def home(request):
     campaigns = FundraisingCampaign.objects.filter(status="active")[:2]
     fundraising_feature = campaigns.first()
 
-    tasting_preview = TastingNote.objects.select_related("product").order_by("-created_at")[:3]
+    tasting_preview = TastingNote.objects.order_by("-created_at")[:3]
     guides_preview = BrewingGuide.objects.filter(is_published=True).order_by("-created_at")[:3]
 
     now = timezone.now()
