@@ -91,7 +91,7 @@
       <form method="post" action="{% url 'storefront:cart_add' %}">
         {% csrf_token %}
         <input type="hidden" name="variant_id" id="id_variant_id" value="{{ product.default_variant_id }}">
-        <input type="hidden" name="next" value="{{ request.path }}">
+        <input type="hidden" name="next" value="{% url 'storefront:cart' %}">
         <div class="quantity-input">
           <label class="quantity-label" for="id_quantity">Quantity</label>
           <input type="number" name="quantity" value="1" min="1"

@@ -278,7 +278,7 @@ def get_products(
 def get_collection_products(
     handle: str,
     first: int = 24,
-    sort_key: str = "CREATED_AT",
+    sort_key: str = "CREATED",
     reverse: bool = True,
 ) -> list[ShopifyProduct]:
     try:

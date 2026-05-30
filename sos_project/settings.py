@@ -1,5 +1,8 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -117,7 +120,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # client-side code, responses, or template output.
 SHOPIFY_STORE_DOMAIN = os.environ.get("SHOPIFY_STORE_DOMAIN", "")
 SHOPIFY_STOREFRONT_ACCESS_TOKEN = os.environ.get("SHOPIFY_STOREFRONT_ACCESS_TOKEN", "")
-SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2025-04")
+SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2026-04")
+
+if not SHOPIFY_STORE_DOMAIN:
+    print("WARNING: SHOPIFY_STORE_DOMAIN is not set.")
+if not SHOPIFY_STOREFRONT_ACCESS_TOKEN:
+    print("WARNING: SHOPIFY_STOREFRONT_ACCESS_TOKEN is not set.")
 
 # ── Email ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = os.environ.get(

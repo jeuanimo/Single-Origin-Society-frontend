@@ -25,8 +25,10 @@ COLLECTION_SORT_MAP = {
     "-price": ("PRICE", True),
     "name": ("TITLE", False),
     "-name": ("TITLE", True),
-    "-created_at": ("CREATED_AT", True),
-    "created_at": ("CREATED_AT", False),
+    "-created_at": ("CREATED_AT", True),   # products query
+    "created_at": ("CREATED_AT", False),   # products query
+    "-created": ("CREATED", True),         # collection query
+    "created": ("CREATED", False),         # collection query
 }
 
 POLICY_FALLBACKS = {
