@@ -1566,19 +1566,20 @@ body.portal-nav-collapsed .portal-main {
 .gm-toolbar-left { display: flex; align-items: center; gap: 12px; }
 .gm-toolbar-right { display: flex; align-items: center; gap: 12px; }
 .gm-refresh-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: var(--p-text-secondary);
-  font-size: 18px;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--p-border);
+  background: var(--p-card);
+  color: var(--p-text);
+  font-size: 13px;
+  font-weight: 500;
   text-decoration: none;
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s;
 }
-.gm-refresh-btn:hover { background: var(--p-gold-light); color: var(--p-gold); }
+.gm-refresh-btn:hover { background: var(--p-gold-light); border-color: var(--p-gold); color: var(--p-gold-dark); }
 .gm-account { font-size: 13px; color: var(--p-text-secondary); }
 .gm-count { font-size: 12px; color: var(--p-text-secondary); }
 .gm-back-btn {
