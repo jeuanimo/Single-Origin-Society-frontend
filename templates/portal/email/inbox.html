@@ -1,0 +1,42 @@
+{% extends "portal/base.html" %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+<div class="p-page-header">
+  <h2 class="p-page-title">Inbox — contact@single-origin-society.com</h2>
+</div>
+
+{% if error %}
+<div class="p-card p-mb-16" style="border-left: 3px solid var(--p-danger);">
+  <p class="p-muted p-no-margin"><strong>Could not connect to mail server:</strong> {{ error }}</p>
+</div>
+{% endif %}
+
+<div class="p-card">
+  <table class="p-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>From</th>
+        <th>Subject</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for msg in messages %}
+      <tr class="{% if not msg.is_read %}p-email-unread{% endif %}">
+        <td>{% if not msg.is_read %}<span class="p-unread-dot"></span>{% endif %}</td>
+        <td class="p-email-from">{{ msg.from|truncatechars:40 }}</td>
+        <td>
+          <a href="{% url 'portal:email_detail' msg.uid %}" class="p-email-subject">
+            {{ msg.subject|truncatechars:80 }}
+          </a>
+        </td>
+        <td class="p-muted p-email-date">{{ msg.date|truncatechars:30 }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="p-empty">No messages found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

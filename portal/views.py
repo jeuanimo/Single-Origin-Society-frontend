@@ -10,6 +10,7 @@ from django.urls import reverse, NoReverseMatch
 import csv
 
 from accounts.decorators import portal_required, manager_required
+from portal.imap_client import fetch_inbox, fetch_message, IMAPError
 from accounts.models import User
 from portal.forms import InquiryAssignForm, InquiryFilterForm, InquiryNoteForm
 from products.models import BrewingGuide, TastingNote
@@ -465,6 +466,30 @@ def subscriber_list(request):
     paginator = Paginator(subs, 50)
     page = paginator.get_page(request.GET.get("page"))
     return render(request, "portal/marketing/subscribers.html", {"page_obj": page, "search_query": q})
+
+
+# ── Email Inbox ───────────────────────────────────────────────────────────────
+
+@portal_required
+def email_inbox(request):
+    try:
+        messages = fetch_inbox(limit=50)
+        error = None
+    except IMAPError as e:
+        messages = []
+        error = str(e)
+    return render(request, "portal/email/inbox.html", {"messages": messages, "error": error})
+
+
+@portal_required
+def email_detail(request, uid):
+    try:
+        message = fetch_message(uid)
+        error = None
+    except IMAPError as e:
+        message = None
+        error = str(e)
+    return render(request, "portal/email/detail.html", {"message": message, "error": error})
 
 
 # ── Staff ─────────────────────────────────────────────────────────────────────

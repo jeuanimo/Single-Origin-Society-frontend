@@ -37,4 +37,7 @@ urlpatterns = [
     path("subscribers/", views.subscriber_list, name="subscriber_list"),
     # Staff
     path("staff/", views.staff_list, name="staff_list"),
+    # Email inbox
+    path("email/", views.email_inbox, name="email_inbox"),
+    path("email/<str:uid>/", views.email_detail, name="email_detail"),
 ]

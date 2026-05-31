@@ -1520,3 +1520,25 @@ body.portal-nav-collapsed .portal-main {
     overflow: hidden;
   }
 }
+
+/* ─── Portal Email Inbox ─── */
+.p-email-unread td { font-weight: 600; }
+.p-unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--p-gold);
+  border-radius: 50%;
+}
+.p-email-from { color: var(--p-text); max-width: 200px; }
+.p-email-subject { color: var(--p-text); text-decoration: none; }
+.p-email-subject:hover { color: var(--p-gold); text-decoration: underline; }
+.p-email-date { white-space: nowrap; font-size: 12px; }
+.p-email-meta-table { width: 100%; border-collapse: collapse; }
+.p-email-meta-table tr { border-bottom: 1px solid var(--p-border); }
+.p-email-meta-table tr:last-child { border-bottom: none; }
+.p-email-meta-table td { padding: 8px 12px; font-size: 13px; }
+.p-email-meta-label { color: var(--p-text-secondary); width: 70px; font-weight: 500; }
+.p-email-body { padding: 0; overflow: hidden; }
+.p-email-iframe { width: 100%; min-height: 500px; border: none; display: block; }
+.p-email-plain { white-space: pre-wrap; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 24px; margin: 0; }

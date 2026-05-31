@@ -152,6 +152,12 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@singleoriginsociety.com")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 
+# ── IMAP (portal inbox) ───────────────────────────────────────────────────────
+IMAP_HOST = os.environ.get("IMAP_HOST", "mail.privateemail.com")
+IMAP_PORT = int(os.environ.get("IMAP_PORT", "993"))
+IMAP_USER = os.environ.get("IMAP_USER", "")
+IMAP_PASSWORD = os.environ.get("IMAP_PASSWORD", "")
+
 # ── Production security ───────────────────────────────────────────────────────
 if not DEBUG:
     SECURE_SSL_REDIRECT = True

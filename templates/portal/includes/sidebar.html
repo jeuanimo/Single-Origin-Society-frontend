@@ -43,6 +43,11 @@
       <span class="icon">✉</span> Subscribers
     </a>
 
+    <div class="sidebar-section">Email</div>
+    <a href="{% url 'portal:email_inbox' %}" class="sidebar-link {% if 'email' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">@</span> Inbox
+    </a>
+
     {% if request.user.is_superuser %}
     <div class="sidebar-section">Admin</div>
     <a href="{% url 'portal:staff_list' %}" class="sidebar-link {% if 'staff' in request.resolver_match.url_name %}active{% endif %}">
