@@ -10,7 +10,8 @@ from django.urls import reverse, NoReverseMatch
 import csv
 
 from accounts.decorators import portal_required, manager_required
-from portal.imap_client import fetch_inbox, fetch_message, IMAPError
+from portal.imap_client import fetch_inbox, fetch_message, delete_message, IMAPError
+from portal.models import EmailDraft
 from accounts.models import User
 from portal.forms import InquiryAssignForm, InquiryFilterForm, InquiryNoteForm
 from products.models import BrewingGuide, TastingNote
@@ -495,6 +496,80 @@ def email_inbox(request):
         emails = []
         error = str(e)
     return render(request, "portal/email/inbox.html", {"emails": emails, "error": error})
+
+
+@portal_required
+@require_POST
+def email_delete(request, uid):
+    try:
+        delete_message(uid)
+        messages.success(request, "Message deleted.")
+    except IMAPError as e:
+        messages.error(request, f"Could not delete message: {e}")
+    return redirect("portal:email_inbox")
+
+
+@portal_required
+def email_compose(request, draft_pk=None):
+    draft = get_object_or_404(EmailDraft, pk=draft_pk, created_by=request.user) if draft_pk else None
+
+    if request.method == "POST":
+        data = _parse_compose_form(request.POST)
+        if request.POST.get("action") == "send" and data["to"]:
+            return _send_compose(request, data, draft)
+        return _save_draft(request, data, draft)
+
+    return render(request, "portal/email/compose.html", {"draft": draft})
+
+
+def _parse_compose_form(post):
+    return {
+        "to": post.get("to", "").strip(),
+        "cc": post.get("cc", "").strip(),
+        "subject": post.get("subject", "").strip(),
+        "body": post.get("body", ""),
+    }
+
+
+def _send_compose(request, data, draft):
+    from django.core.mail import EmailMessage as DjangoEmail
+    DjangoEmail(
+        subject=data["subject"],
+        body=data["body"],
+        from_email=None,
+        to=[t.strip() for t in data["to"].split(",") if t.strip()],
+        cc=[c.strip() for c in data["cc"].split(",") if c.strip()] if data["cc"] else [],
+    ).send()
+    if draft:
+        draft.delete()
+    messages.success(request, f"Email sent to {data['to']}.")
+    return redirect("portal:email_inbox")
+
+
+def _save_draft(request, data, draft):
+    if draft:
+        for field, value in data.items():
+            setattr(draft, field, value)
+        draft.save()
+    else:
+        draft = EmailDraft.objects.create(**data, created_by=request.user)
+    messages.success(request, "Draft saved.")
+    return redirect("portal:email_draft_edit", pk=draft.pk)
+
+
+@portal_required
+def email_draft_list(request):
+    drafts = EmailDraft.objects.filter(created_by=request.user)
+    return render(request, "portal/email/drafts.html", {"drafts": drafts})
+
+
+@portal_required
+@require_POST
+def email_draft_delete(request, pk):
+    draft = get_object_or_404(EmailDraft, pk=pk, created_by=request.user)
+    draft.delete()
+    messages.success(request, "Draft deleted.")
+    return redirect("portal:email_draft_list")
 
 
 @portal_required

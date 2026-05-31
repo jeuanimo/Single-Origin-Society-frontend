@@ -1737,3 +1737,64 @@ body.portal-nav-collapsed .portal-main {
   transition: background 0.15s, border-color 0.15s;
 }
 .gm-reply-btn:hover { background: var(--p-gold-light); border-color: var(--p-gold); color: var(--p-gold-dark); }
+
+/* ─── Compose / Drafts ─── */
+.gm-compose-wrap { padding: 0; }
+.gm-compose-field {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--p-border);
+  padding: 0 16px;
+}
+.gm-compose-label {
+  width: 60px;
+  font-size: 12px;
+  color: var(--p-text-secondary);
+  flex-shrink: 0;
+}
+.gm-compose-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--p-text);
+  background: transparent;
+}
+.gm-compose-body-wrap {
+  padding: 0 16px;
+  border-bottom: 1px solid var(--p-border);
+}
+.gm-compose-body {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 16px 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--p-text);
+  background: transparent;
+  resize: vertical;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+.gm-compose-actions {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.gm-delete-btn {
+  background: transparent;
+  border: 1px solid var(--p-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--p-danger);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.gm-delete-btn:hover { background: rgba(185, 58, 58, 0.06); border-color: var(--p-danger); }
+.gm-draft-actions { display: flex; gap: 6px; align-items: center; }

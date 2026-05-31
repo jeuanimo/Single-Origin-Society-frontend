@@ -1,0 +1,53 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if draft %}Edit Draft{% else %}New Email{% endif %}{% endblock title %}
+{% block content %}
+<div class="gm-wrap">
+
+  <div class="gm-toolbar">
+    <div class="gm-toolbar-left">
+      <a href="{% url 'portal:email_inbox' %}" class="gm-back-btn">← Inbox</a>
+      <a href="{% url 'portal:email_draft_list' %}" class="gm-back-btn">Drafts</a>
+    </div>
+    <div class="gm-toolbar-right">
+      {% if draft %}
+      <form method="post" action="{% url 'portal:email_draft_delete' draft.pk %}" class="p-inline-form">
+        {% csrf_token %}
+        <button type="submit" class="gm-delete-btn" onclick="return confirm('Delete this draft?')">🗑 Delete Draft</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="gm-compose-wrap">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="gm-compose-field">
+        <label class="gm-compose-label">To</label>
+        <input type="text" name="to" class="gm-compose-input" value="{{ draft.to|default:'' }}" placeholder="recipient@example.com" required>
+      </div>
+
+      <div class="gm-compose-field">
+        <label class="gm-compose-label">Cc</label>
+        <input type="text" name="cc" class="gm-compose-input" value="{{ draft.cc|default:'' }}" placeholder="optional">
+      </div>
+
+      <div class="gm-compose-field">
+        <label class="gm-compose-label">Subject</label>
+        <input type="text" name="subject" class="gm-compose-input" value="{{ draft.subject|default:'' }}" placeholder="Subject">
+      </div>
+
+      <div class="gm-compose-body-wrap">
+        <textarea name="body" class="gm-compose-body" rows="18" placeholder="Write your message here...">{{ draft.body|default:'' }}</textarea>
+      </div>
+
+      <div class="gm-compose-actions">
+        <button type="submit" name="action" value="send" class="p-btn p-btn-primary">Send</button>
+        <button type="submit" name="action" value="draft" class="p-btn p-btn-secondary">Save Draft</button>
+        <a href="{% url 'portal:email_inbox' %}" class="p-btn p-btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock content %}

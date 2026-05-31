@@ -13,6 +13,8 @@
       <span class="gm-account">contact@single-origin-society.com</span>
     </div>
     <div class="gm-toolbar-right">
+      <a href="{% url 'portal:email_draft_list' %}" class="gm-back-btn">Drafts</a>
+      <a href="{% url 'portal:email_compose' %}" class="gm-reply-btn">✏ Compose</a>
       <span class="gm-count">{{ emails|length }} messages</span>
     </div>
   </div>

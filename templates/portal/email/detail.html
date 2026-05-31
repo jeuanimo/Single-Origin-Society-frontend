@@ -13,6 +13,10 @@
     <div class="gm-toolbar-right">
       {% if message %}
       <a href="mailto:{{ message.from }}?subject=Re: {{ message.subject|urlencode }}" class="gm-reply-btn">↩ Reply</a>
+      <form method="post" action="{% url 'portal:email_delete' message.uid %}" class="p-inline-form">
+        {% csrf_token %}
+        <button type="submit" class="gm-delete-btn" onclick="return confirm('Delete this message permanently?')">🗑 Delete</button>
+      </form>
       {% endif %}
     </div>
   </div>

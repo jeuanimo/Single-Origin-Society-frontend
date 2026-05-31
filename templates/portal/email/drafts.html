@@ -1,0 +1,41 @@
+{% extends "portal/base.html" %}
+{% block title %}Drafts{% endblock title %}
+{% block content %}
+<div class="gm-wrap">
+
+  <div class="gm-toolbar">
+    <div class="gm-toolbar-left">
+      <a href="{% url 'portal:email_inbox' %}" class="gm-back-btn">← Inbox</a>
+      <span class="gm-account">Drafts</span>
+    </div>
+    <div class="gm-toolbar-right">
+      <a href="{% url 'portal:email_compose' %}" class="gm-reply-btn">✏ New Email</a>
+    </div>
+  </div>
+
+  <div class="gm-list">
+    {% for draft in drafts %}
+    <div class="gm-row gm-unread">
+      <div class="gm-star">✏</div>
+      <div class="gm-sender">To: {{ draft.to|truncatechars:28 }}</div>
+      <div class="gm-subject-wrap">
+        <a href="{% url 'portal:email_draft_edit' draft.pk %}" class="gm-subject">
+          {{ draft.subject|default:"(no subject)" }}
+        </a>
+      </div>
+      <div class="gm-draft-actions">
+        <a href="{% url 'portal:email_draft_edit' draft.pk %}" class="gm-back-btn">Edit</a>
+        <form method="post" action="{% url 'portal:email_draft_delete' draft.pk %}" class="p-inline-form">
+          {% csrf_token %}
+          <button type="submit" class="gm-delete-btn" onclick="return confirm('Delete this draft?')">Delete</button>
+        </form>
+      </div>
+      <div class="gm-date">{{ draft.updated_at|date:"M j" }}</div>
+    </div>
+    {% empty %}
+    <div class="gm-empty">No drafts saved.</div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock content %}

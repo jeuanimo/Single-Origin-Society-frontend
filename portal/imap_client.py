@@ -117,6 +117,22 @@ def fetch_inbox(limit=50):
             pass
 
 
+def delete_message(uid):
+    """Permanently delete a message from the inbox by UID."""
+    conn = _connect()
+    try:
+        conn.select("INBOX")
+        conn.store(uid.encode(), "+FLAGS", "\\Deleted")
+        conn.expunge()
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to delete message: {e}")
+    finally:
+        try:
+            conn.logout()
+        except Exception:
+            pass
+
+
 def fetch_message(uid):
     """Return a full parsed message dict for the given UID."""
     conn = _connect()

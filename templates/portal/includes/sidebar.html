@@ -44,8 +44,14 @@
     </a>
 
     <div class="sidebar-section">Email</div>
-    <a href="{% url 'portal:email_inbox' %}" class="sidebar-link {% if 'email' in request.resolver_match.url_name %}active{% endif %}">
+    <a href="{% url 'portal:email_inbox' %}" class="sidebar-link {% if request.resolver_match.url_name == 'email_inbox' %}active{% endif %}">
       <span class="icon">@</span> Inbox
+    </a>
+    <a href="{% url 'portal:email_compose' %}" class="sidebar-link {% if 'compose' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">✏</span> Compose
+    </a>
+    <a href="{% url 'portal:email_draft_list' %}" class="sidebar-link {% if 'draft' in request.resolver_match.url_name %}active{% endif %}">
+      <span class="icon">◫</span> Drafts
     </a>
 
     {% if request.user.is_superuser %}
