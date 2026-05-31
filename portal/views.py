@@ -557,13 +557,17 @@ def _parse_compose_form(post):
 
 def _send_compose(request, data, draft):
     from django.core.mail import EmailMessage as DjangoEmail
-    DjangoEmail(
-        subject=data["subject"],
-        body=data["body"],
-        from_email=None,
-        to=[t.strip() for t in data["to"].split(",") if t.strip()],
-        cc=[c.strip() for c in data["cc"].split(",") if c.strip()] if data["cc"] else [],
-    ).send()
+    try:
+        DjangoEmail(
+            subject=data["subject"],
+            body=data["body"],
+            from_email=None,
+            to=[t.strip() for t in data["to"].split(",") if t.strip()],
+            cc=[c.strip() for c in data["cc"].split(",") if c.strip()] if data["cc"] else [],
+        ).send()
+    except Exception as e:
+        messages.error(request, f"Failed to send email: {e}")
+        return redirect("portal:email_compose")
     if draft:
         draft.delete()
     messages.success(request, f"Email sent to {data['to']}.")
