@@ -43,28 +43,46 @@
     {% if products %}
     <div class="product-grid">
       {% for product in products %}
-      <a href="{{ product.get_absolute_url }}" class="product-card">
-        <div class="product-card-image">
-          {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="280" height="280">
-          {% else %}
-          <span class="product-no-image">{{ product.name }}</span>
-          {% endif %}
-        </div>
-        <div class="product-card-body">
-          {% if product.origin %}<div class="origin">{{ product.origin }}</div>{% endif %}
-          <h3>{{ product.name }}</h3>
-          {% if product.stock_available == 0 %}
-          <span class="badge badge-cancelled">Out of Stock</span>
-          {% elif product.is_low_stock %}
-          <span class="badge badge-pending">Low Stock</span>
-          {% endif %}
-          <div class="price">
-            ${{ product.price }}
-            {% if product.compare_price %}<span class="compare">${{ product.compare_price }}</span>{% endif %}
+      <div class="product-card">
+        <a href="{{ product.get_absolute_url }}" class="product-card-image-link">
+          <div class="product-card-image">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="280" height="280">
+            {% else %}
+            <span class="product-no-image">{{ product.name }}</span>
+            {% endif %}
           </div>
+        </a>
+        <div class="product-card-body">
+          {% if product.origin %}<div class="pc-brand">{{ product.origin }}</div>{% endif %}
+          <a href="{{ product.get_absolute_url }}" class="pc-title-link">
+            <h3 class="pc-title">{{ product.name }}</h3>
+          </a>
+          <div class="pc-price-row">
+            <span class="pc-price">${{ product.price }}</span>
+            {% if product.compare_price %}
+            <span class="pc-compare">${{ product.compare_price }}</span>
+            {% endif %}
+          </div>
+          {% if product.stock_available == 0 %}
+          <div class="pc-stock pc-out">Out of Stock</div>
+          {% elif product.is_low_stock %}
+          <div class="pc-stock pc-low">Only {{ product.stock_available }} left</div>
+          {% else %}
+          <div class="pc-stock pc-in">In Stock</div>
+          {% endif %}
+          <form method="post" action="{% url 'storefront:cart_add' %}" class="pc-cart-form">
+            {% csrf_token %}
+            <input type="hidden" name="variant_id" value="{{ product.default_variant_id }}">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="next" value="{% url 'storefront:cart' %}">
+            <button type="submit" class="pc-atc-btn"
+              {% if product.stock_available == 0 %}disabled{% endif %}>
+              Add to Cart
+            </button>
+          </form>
         </div>
-      </a>
+      </div>
       {% endfor %}
     </div>
     {% else %}
