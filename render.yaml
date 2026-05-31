@@ -78,6 +78,11 @@ services:
         value: contact@single-origin-society.com
       - key: IMAP_PASSWORD
         sync: false
+      # ── Shopify Webhook ──────────────────────────────────────────────────────
+      - key: SHOPIFY_WEBHOOK_SECRET
+        sync: false
+      - key: ORDER_NOTIFICATION_EMAIL
+        value: contact@single-origin-society.com
 
 databases:
   - name: sos-frontend

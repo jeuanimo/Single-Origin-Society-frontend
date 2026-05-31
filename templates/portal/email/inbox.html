@@ -29,7 +29,7 @@
   <div class="gm-list">
     {% for msg in emails %}
     <a href="{% url 'portal:email_detail' msg.uid %}" class="gm-row {% if not msg.is_read %}gm-unread{% endif %}">
-      <div class="gm-star">{% if not msg.is_read %}★{% else %}☆{% endif %}</div>
+      <div class="gm-star">{% if msg.is_important %}★{% elif not msg.is_read %}●{% else %}☆{% endif %}</div>
       <div class="gm-sender">{{ msg.from|truncatechars:28 }}</div>
       <div class="gm-subject-wrap">
         <span class="gm-subject">{{ msg.subject }}</span>

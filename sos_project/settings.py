@@ -134,6 +134,10 @@ if not SHOPIFY_STORE_DOMAIN:
 if not SHOPIFY_STOREFRONT_ACCESS_TOKEN:
     print("WARNING: SHOPIFY_STOREFRONT_ACCESS_TOKEN is not set.")
 
+# ── Shopify Webhook ───────────────────────────────────────────────────────────
+SHOPIFY_WEBHOOK_SECRET = os.environ.get("SHOPIFY_WEBHOOK_SECRET", "")
+ORDER_NOTIFICATION_EMAIL = os.environ.get("ORDER_NOTIFICATION_EMAIL", "contact@single-origin-society.com")
+
 # ── Email ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
