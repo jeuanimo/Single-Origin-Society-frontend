@@ -1,38 +1,58 @@
 {% extends "portal/base.html" %}
-{% block title %}{% if message %}{{ message.subject }}{% else %}Email{% endif %}{% endblock %}
+{% block title %}
+  {% if message %}{{ message.subject }}{% else %}Email{% endif %}
+{% endblock title %}
 {% block content %}
-<div class="p-page-header">
-  <h2 class="p-page-title">Email</h2>
-  <a href="{% url 'portal:email_inbox' %}" class="p-btn p-btn-secondary p-btn-sm">← Back to Inbox</a>
-</div>
 
-{% if error %}
-<div class="p-card" style="border-left: 3px solid var(--p-danger);">
-  <p class="p-muted p-no-margin"><strong>Error:</strong> {{ error }}</p>
-</div>
-{% endif %}
+<div class="gm-wrap">
 
-{% if message %}
-<div class="p-card p-mb-16">
-  <table class="p-email-meta-table">
-    <tr><td class="p-email-meta-label">From</td><td>{{ message.from }}</td></tr>
-    <tr><td class="p-email-meta-label">To</td><td>{{ message.to }}</td></tr>
-    <tr><td class="p-email-meta-label">Subject</td><td><strong>{{ message.subject }}</strong></td></tr>
-    <tr><td class="p-email-meta-label">Date</td><td>{{ message.date }}</td></tr>
-  </table>
-</div>
+  <div class="gm-toolbar">
+    <div class="gm-toolbar-left">
+      <a href="{% url 'portal:email_inbox' %}" class="gm-back-btn">← Inbox</a>
+    </div>
+    <div class="gm-toolbar-right">
+      {% if message %}
+      <a href="mailto:{{ message.from }}?subject=Re: {{ message.subject|urlencode }}" class="gm-reply-btn">↩ Reply</a>
+      {% endif %}
+    </div>
+  </div>
 
-<div class="p-card p-email-body">
-  {% if message.is_html %}
-    <iframe srcdoc="{{ message.body|escape }}" class="p-email-iframe" sandbox="allow-same-origin"></iframe>
-  {% else %}
-    <pre class="p-email-plain">{{ message.body }}</pre>
+  {% if error %}
+  <div class="gm-error-bar">
+    <strong>Error:</strong> {{ error }}
+  </div>
   {% endif %}
-</div>
 
-<div class="p-form-actions">
-  <a href="mailto:{{ message.from }}?subject=Re: {{ message.subject|urlencode }}" class="p-btn p-btn-primary">Reply in Email Client</a>
-  <a href="{% url 'portal:email_inbox' %}" class="p-btn p-btn-secondary">Back to Inbox</a>
+  {% if message %}
+  <div class="gm-detail-wrap">
+
+    <h2 class="gm-detail-subject">{{ message.subject }}</h2>
+
+    <div class="gm-detail-header">
+      <div class="gm-detail-avatar">{{ message.from|first|upper }}</div>
+      <div class="gm-detail-meta">
+        <div class="gm-detail-from"><strong>{{ message.from }}</strong></div>
+        <div class="gm-detail-to-date">
+          <span class="gm-detail-to">to {{ message.to }}</span>
+          <span class="gm-detail-date">{{ message.date }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gm-detail-body">
+      {% if message.is_html %}
+        <iframe title="Email message body" srcdoc="{{ message.body|escape }}" class="gm-iframe" sandbox="allow-same-origin"></iframe>
+      {% else %}
+        <pre class="gm-plain">{{ message.body }}</pre>
+      {% endif %}
+    </div>
+
+    <div class="gm-detail-actions">
+      <a href="mailto:{{ message.from }}?subject=Re: {{ message.subject|urlencode }}" class="gm-reply-btn">↩ Reply</a>
+    </div>
+
+  </div>
+  {% endif %}
+
 </div>
-{% endif %}
-{% endblock %}
+{% endblock content %}

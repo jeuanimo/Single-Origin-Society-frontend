@@ -1,43 +1,43 @@
 {% extends "portal/base.html" %}
 {% block title %}Inbox{% endblock title %}
 {% block content %}
-<div class="p-page-header">
-  <h2 class="p-page-title">Inbox — contact@single-origin-society.com</h2>
-  <a href="{% url 'portal:email_inbox' %}" class="p-btn p-btn-primary p-btn-sm">⟳ Check for New Email</a>
-</div>
 
-{% if error %}
-<div class="p-card p-mb-16 p-error-card">
-  <p class="p-muted p-no-margin"><strong>Could not connect to mail server:</strong> {{ error }}</p>
-</div>
-{% endif %}
+<div class="gm-wrap">
 
-<div class="p-card">
-  <table class="p-table">
-    <thead>
-      <tr>
-        <th></th>
-        <th>From</th>
-        <th>Subject</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for msg in messages %}
-      <tr class="{% if not msg.is_read %}p-email-unread{% endif %}">
-        <td>{% if not msg.is_read %}<span class="p-unread-dot"></span>{% endif %}</td>
-        <td class="p-email-from">{{ msg.from|truncatechars:40 }}</td>
-        <td>
-          <a href="{% url 'portal:email_detail' msg.uid %}" class="p-email-subject">
-            {{ msg.subject|truncatechars:80 }}
-          </a>
-        </td>
-        <td class="p-muted p-email-date">{{ msg.date|truncatechars:30 }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="4" class="p-empty">No messages found.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Toolbar -->
+  <div class="gm-toolbar">
+    <div class="gm-toolbar-left">
+      <a href="{% url 'portal:email_inbox' %}" class="gm-refresh-btn" title="Refresh">
+        <span>⟳</span>
+      </a>
+      <span class="gm-account">contact@single-origin-society.com</span>
+    </div>
+    <div class="gm-toolbar-right">
+      <span class="gm-count">{{ messages|length }} messages</span>
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="gm-error-bar">
+    <strong>Could not connect to mail server:</strong> {{ error }}
+  </div>
+  {% endif %}
+
+  <!-- Message list -->
+  <div class="gm-list">
+    {% for msg in messages %}
+    <a href="{% url 'portal:email_detail' msg.uid %}" class="gm-row {% if not msg.is_read %}gm-unread{% endif %}">
+      <div class="gm-star">{% if not msg.is_read %}★{% else %}☆{% endif %}</div>
+      <div class="gm-sender">{{ msg.from|truncatechars:28 }}</div>
+      <div class="gm-subject-wrap">
+        <span class="gm-subject">{{ msg.subject }}</span>
+      </div>
+      <div class="gm-date">{{ msg.date|truncatechars:12 }}</div>
+    </a>
+    {% empty %}
+    <div class="gm-empty">Your inbox is empty.</div>
+    {% endfor %}
+  </div>
+
 </div>
 {% endblock content %}
