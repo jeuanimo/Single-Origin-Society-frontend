@@ -13,6 +13,15 @@
     <div class="gm-toolbar-right">
       {% if message %}
       <a href="mailto:{{ message.from }}?subject=Re: {{ message.subject|urlencode }}" class="gm-reply-btn">↩ Reply</a>
+      <form method="post" action="{% url 'portal:email_mark_important' message.uid %}" class="p-inline-form">
+        {% csrf_token %}
+        <input type="hidden" name="flagged" value="1">
+        <button type="submit" class="gm-reply-btn">★ Mark Important</button>
+      </form>
+      <form method="post" action="{% url 'portal:email_mark_unread' message.uid %}" class="p-inline-form">
+        {% csrf_token %}
+        <button type="submit" class="gm-back-btn">✉ Mark Unread</button>
+      </form>
       <form method="post" action="{% url 'portal:email_delete' message.uid %}" class="p-inline-form">
         {% csrf_token %}
         <button type="submit" class="gm-delete-btn" onclick="return confirm('Delete this message permanently?')">🗑 Delete</button>

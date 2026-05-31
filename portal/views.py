@@ -10,7 +10,7 @@ from django.urls import reverse, NoReverseMatch
 import csv
 
 from accounts.decorators import portal_required, manager_required
-from portal.imap_client import fetch_inbox, fetch_message, delete_message, IMAPError
+from portal.imap_client import fetch_inbox, fetch_message, delete_message, mark_unread, toggle_important, IMAPError
 from portal.models import EmailDraft
 from accounts.models import User
 from portal.forms import InquiryAssignForm, InquiryFilterForm, InquiryNoteForm
@@ -496,6 +496,30 @@ def email_inbox(request):
         emails = []
         error = str(e)
     return render(request, "portal/email/inbox.html", {"emails": emails, "error": error})
+
+
+@portal_required
+@require_POST
+def email_mark_important(request, uid):
+    flagged = request.POST.get("flagged") == "1"
+    try:
+        toggle_important(uid, flagged)
+        label = "marked as important" if flagged else "unmarked"
+        messages.success(request, f"Message {label}.")
+    except IMAPError as e:
+        messages.error(request, f"Could not update flag: {e}")
+    return redirect("portal:email_detail", uid=uid)
+
+
+@portal_required
+@require_POST
+def email_mark_unread(request, uid):
+    try:
+        mark_unread(uid)
+        messages.success(request, "Message marked as unread.")
+    except IMAPError as e:
+        messages.error(request, f"Could not mark as unread: {e}")
+    return redirect("portal:email_inbox")
 
 
 @portal_required

@@ -117,6 +117,37 @@ def fetch_inbox(limit=50):
             pass
 
 
+def mark_unread(uid):
+    """Remove the \\Seen flag so the message appears unread."""
+    conn = _connect()
+    try:
+        conn.select("INBOX")
+        conn.store(uid.encode(), "-FLAGS", "\\Seen")
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to mark message unread: {e}")
+    finally:
+        try:
+            conn.logout()
+        except Exception:
+            pass
+
+
+def toggle_important(uid, flagged):
+    r"""Set or remove the \Flagged (important) flag."""
+    conn = _connect()
+    try:
+        conn.select("INBOX")
+        action = "+FLAGS" if flagged else "-FLAGS"
+        conn.store(uid.encode(), action, "\\Flagged")
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to update flag: {e}") from e
+    finally:
+        try:
+            conn.logout()
+        except Exception:
+            pass
+
+
 def delete_message(uid):
     """Permanently delete a message from the inbox by UID."""
     conn = _connect()

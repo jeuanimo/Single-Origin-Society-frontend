@@ -45,5 +45,7 @@ urlpatterns = [
     path("email/drafts/<int:pk>/edit/", views.email_compose, name="email_draft_edit"),
     path("email/drafts/<int:pk>/delete/", views.email_draft_delete, name="email_draft_delete"),
     path("email/<str:uid>/delete/", views.email_delete, name="email_delete"),
+    path("email/<str:uid>/mark-unread/", views.email_mark_unread, name="email_mark_unread"),
+    path("email/<str:uid>/mark-important/", views.email_mark_important, name="email_mark_important"),
     path("email/<str:uid>/", views.email_detail, name="email_detail"),
 ]
