@@ -324,6 +324,26 @@ def about(request):
 
 def contact(request):
     if request.method == "POST":
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        sender_email = request.POST.get("email", "").strip()
+        subject = request.POST.get("subject", "").strip() or "Contact Form Enquiry"
+        message_body = request.POST.get("message", "").strip()
+
+        if sender_email and message_body:
+            from django.core.mail import EmailMessage
+            from django.conf import settings
+            try:
+                EmailMessage(
+                    subject=f"Contact: {subject}",
+                    body=f"From: {first_name} {last_name} <{sender_email}>\n\n{message_body}",
+                    from_email=None,
+                    to=[settings.ORDER_NOTIFICATION_EMAIL],
+                    reply_to=[sender_email],
+                ).send()
+            except Exception:
+                pass
+
         messages.success(request, "Thank you for your message. We'll be in touch.")
         return redirect("storefront:contact")
     return render(request, "storefront/contact.html")
