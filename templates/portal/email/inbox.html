@@ -13,7 +13,7 @@
       <span class="gm-account">contact@single-origin-society.com</span>
     </div>
     <div class="gm-toolbar-right">
-      <span class="gm-count">{{ messages|length }} messages</span>
+      <span class="gm-count">{{ emails|length }} messages</span>
     </div>
   </div>
 
@@ -25,7 +25,7 @@
 
   <!-- Message list -->
   <div class="gm-list">
-    {% for msg in messages %}
+    {% for msg in emails %}
     <a href="{% url 'portal:email_detail' msg.uid %}" class="gm-row {% if not msg.is_read %}gm-unread{% endif %}">
       <div class="gm-star">{% if not msg.is_read %}★{% else %}☆{% endif %}</div>
       <div class="gm-sender">{{ msg.from|truncatechars:28 }}</div>

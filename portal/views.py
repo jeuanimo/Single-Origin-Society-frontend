@@ -473,12 +473,12 @@ def subscriber_list(request):
 @portal_required
 def email_inbox(request):
     try:
-        messages = fetch_inbox(limit=50)
+        emails = fetch_inbox(limit=50)
         error = None
     except IMAPError as e:
-        messages = []
+        emails = []
         error = str(e)
-    return render(request, "portal/email/inbox.html", {"messages": messages, "error": error})
+    return render(request, "portal/email/inbox.html", {"emails": emails, "error": error})
 
 
 @portal_required
