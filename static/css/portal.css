@@ -1542,3 +1542,5 @@ body.portal-nav-collapsed .portal-main {
 .p-email-body { padding: 0; overflow: hidden; }
 .p-email-iframe { width: 100%; min-height: 500px; border: none; display: block; }
 .p-email-plain { white-space: pre-wrap; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 24px; margin: 0; }
+
+.p-error-card { border-left: 3px solid var(--p-danger); }

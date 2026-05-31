@@ -1,12 +1,13 @@
 {% extends "portal/base.html" %}
-{% block title %}Inbox{% endblock %}
+{% block title %}Inbox{% endblock title %}
 {% block content %}
 <div class="p-page-header">
   <h2 class="p-page-title">Inbox — contact@single-origin-society.com</h2>
+  <a href="{% url 'portal:email_inbox' %}" class="p-btn p-btn-primary p-btn-sm">⟳ Check for New Email</a>
 </div>
 
 {% if error %}
-<div class="p-card p-mb-16" style="border-left: 3px solid var(--p-danger);">
+<div class="p-card p-mb-16 p-error-card">
   <p class="p-muted p-no-margin"><strong>Could not connect to mail server:</strong> {{ error }}</p>
 </div>
 {% endif %}
@@ -39,4 +40,4 @@
     </tbody>
   </table>
 </div>
-{% endblock %}
+{% endblock content %}
