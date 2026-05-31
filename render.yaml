@@ -10,15 +10,18 @@ services:
     preDeployCommand: python manage.py migrate
     startCommand: gunicorn sos_project.wsgi:application
     numInstances: 1
+    domains:
+      - name: single-origin-society.com
+      - name: www.single-origin-society.com
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.7
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: sos-frontend-67h1.onrender.com,localhost,127.0.0.1
+        value: single-origin-society.com,www.single-origin-society.com,sos-frontend-67h1.onrender.com,localhost,127.0.0.1
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
-        value: https://sos-frontend-67h1.onrender.com
+        value: https://single-origin-society.com,https://www.single-origin-society.com,https://sos-frontend-67h1.onrender.com
       - key: DB_ENGINE
         value: django.db.backends.postgresql
       - key: DB_NAME
@@ -51,6 +54,21 @@ services:
         value: "2026-04"
       - key: SENDGRID_API_KEY
         sync: false
+      # ── Email (PrivateEmail SMTP) ────────────────────────────────────────────
+      - key: EMAIL_HOST
+        value: mail.privateemail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        value: contact@single-origin-society.com
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        value: contact@single-origin-society.com
+      - key: SERVER_EMAIL
+        value: contact@single-origin-society.com
 
 databases:
   - name: sos-frontend
