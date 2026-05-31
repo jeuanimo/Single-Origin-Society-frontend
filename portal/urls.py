@@ -24,6 +24,7 @@ urlpatterns = [
     path("content/tasting-notes/", views.content_tasting_notes, name="content_tasting_notes"),
     path("content/tasting-notes/new/", views.content_tasting_note_edit, name="content_tasting_note_new"),
     path("content/tasting-notes/<int:pk>/edit/", views.content_tasting_note_edit, name="content_tasting_note_edit"),
+    path("content/journal/", views.content_journal_posts, name="content_journal_posts"),
     path("content/inquiries/wholesale/", views.content_wholesale_inquiries, name="content_wholesale_inquiries"),
     path("content/inquiries/wholesale/<int:pk>/", views.content_wholesale_inquiry_detail, name="content_wholesale_inquiry_detail"),
     path("content/inquiries/ambassadors/", views.content_ambassador_inquiries, name="content_ambassador_inquiries"),

@@ -288,6 +288,22 @@ def content_tasting_note_edit(request, pk=None):
     return render(request, "portal/content/tasting_note_edit.html", {"note": note})
 
 
+# ── Journal Posts ────────────────────────────────────────────────────────────
+
+@portal_required
+def content_journal_posts(request):
+    posts = BlogPost.objects.all()
+    q = request.GET.get("q", "")
+    if q:
+        posts = posts.filter(Q(title__icontains=q) | Q(tags__icontains=q))
+    return render(request, "portal/content/blog.html", {
+        "posts": posts,
+        "current_status": "",
+        "search_query": q,
+        "status_choices": BlogPost.STATUS_CHOICES,
+    })
+
+
 # ── Wholesale Inquiries ───────────────────────────────────────────────────────
 
 @portal_required
