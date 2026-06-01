@@ -12,7 +12,7 @@ import csv
 from accounts.decorators import portal_required, manager_required
 from portal.imap_client import (
     fetch_inbox, fetch_message, fetch_sent, fetch_sent_message,
-    fetch_folders, delete_message, mark_unread, toggle_important, IMAPError,
+    fetch_folders, save_to_sent, delete_message, mark_unread, toggle_important, IMAPError,
 )
 from portal.models import EmailDraft
 from accounts.models import User
@@ -591,13 +591,15 @@ def _parse_compose_form(post):
 def _send_compose(request, data, draft):
     from django.core.mail import EmailMessage as DjangoEmail
     try:
-        DjangoEmail(
+        msg = DjangoEmail(
             subject=data["subject"],
             body=data["body"],
             from_email=None,
             to=[t.strip() for t in data["to"].split(",") if t.strip()],
             cc=[c.strip() for c in data["cc"].split(",") if c.strip()] if data["cc"] else [],
-        ).send()
+        )
+        msg.send()
+        save_to_sent(msg.message().as_bytes())
     except Exception as e:
         messages.error(request, f"Failed to send email: {e}")
         return redirect("portal:email_compose")

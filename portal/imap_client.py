@@ -8,6 +8,7 @@ import email
 import email.header
 import email.utils
 import logging
+import time
 from email import policy
 from django.conf import settings
 
@@ -184,6 +185,19 @@ def fetch_folders():
         return [_parse_folder_name(f) for f in folders if f]
     except imaplib.IMAP4.error as e:
         raise IMAPError(f"Failed to list folders: {e}") from e
+    finally:
+        _logout(conn)
+
+
+def save_to_sent(raw_bytes):
+    """Append a sent message to the IMAP Sent folder."""
+    conn = _connect()
+    try:
+        folder = _find_sent_folder(conn)
+        conn.append(f'"{folder}"', r"\Seen", imaplib.Time2Internaldate(time.time()), raw_bytes)
+        logger.info("Saved sent message to IMAP folder: %s", folder)
+    except imaplib.IMAP4.error as e:
+        logger.warning("Could not save message to Sent folder: %s", e)
     finally:
         _logout(conn)
 
