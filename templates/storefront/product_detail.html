@@ -48,7 +48,7 @@
           <span class="badge badge-confirmed">In Stock</span>
         {% endif %}
       </p>
-      <p class="description">{{ product.description }}</p>
+      <div class="description">{{ product.description|safe }}</div>
 
       {% if product.variants|length > 1 %}
       <div class="form-group">
