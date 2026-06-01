@@ -465,7 +465,10 @@ select.p-form-control {
 .badge-featured { background: #fef3c7; color: #92400e; }
 .p-image-current { font-size: 12px; color: var(--p-text-secondary); margin-top: 4px; }
 .p-check-group { display: flex; gap: 20px; }
-.p-check-label { font-size: 13px; }
+.p-check-label { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.p-form-row-checks { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+.p-form-divider { border: none; border-top: 1px solid var(--p-border); margin: 20px 0; }
+.p-required { color: #c0392b; }
 .p-form-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .p-heading-sm { font-size: 28px; text-align: center; margin-bottom: 30px; }
 .p-section-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }

@@ -642,6 +642,52 @@ def staff_list(request):
     return render(request, "portal/staff/list.html", {"staff_members": staff})
 
 
+@manager_required
+def staff_form(request, pk=None):
+    member = get_object_or_404(User, pk=pk, is_staff=True) if pk else None
+
+    if request.method == "POST":
+        data = request.POST
+        password = data.get("password", "").strip()
+        password_confirm = data.get("password_confirm", "").strip()
+
+        if not member and not password:
+            messages.error(request, "Password is required for new staff accounts.")
+            return render(request, "portal/staff/form.html", {"member": member})
+
+        if password and password != password_confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "portal/staff/form.html", {"member": member})
+
+        username = data.get("username", "").strip()
+        email = data.get("email", "").strip()
+
+        if not member and User.objects.filter(username=username).exists():
+            messages.error(request, f"Username '{username}' is already taken.")
+            return render(request, "portal/staff/form.html", {"member": member})
+
+        obj = member or User()
+        obj.first_name = data.get("first_name", "").strip()
+        obj.last_name = data.get("last_name", "").strip()
+        obj.username = username
+        obj.email = email
+        obj.phone = data.get("phone", "").strip()
+        obj.notes = data.get("notes", "")
+        obj.is_staff = True
+        obj.is_superuser = data.get("is_superuser") == "on"
+        obj.is_active = data.get("is_active") == "on"
+
+        if password:
+            obj.set_password(password)
+
+        obj.save()
+        action = "updated" if member else "created"
+        messages.success(request, f"Staff account {action}.")
+        return redirect("portal:staff_list")
+
+    return render(request, "portal/staff/form.html", {"member": member})
+
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _apply_blog_form_data(obj, request):

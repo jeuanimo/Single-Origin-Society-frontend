@@ -1,0 +1,66 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if member %}Edit Staff Account{% else %}New Staff Account{% endif %}{% endblock title %}
+{% block content %}
+<h2 class="p-page-title-mb">{% if member %}Edit Staff Account{% else %}New Staff Account{% endif %}</h2>
+<div class="p-card p-form-card">
+  <form method="post" autocomplete="off">
+    {% csrf_token %}
+
+    <div class="p-form-row">
+      <div>
+        <label for="id_first_name" class="p-label">First Name</label>
+        <input id="id_first_name" type="text" name="first_name" value="{{ member.first_name|default:'' }}" class="p-form-control p-select-mb">
+      </div>
+      <div>
+        <label for="id_last_name" class="p-label">Last Name</label>
+        <input id="id_last_name" type="text" name="last_name" value="{{ member.last_name|default:'' }}" class="p-form-control p-select-mb">
+      </div>
+    </div>
+
+    <div class="p-form-row">
+      <div>
+        <label for="id_username" class="p-label">Username <span class="p-required">*</span></label>
+        <input id="id_username" type="text" name="username" value="{{ member.username|default:'' }}" class="p-form-control p-select-mb" required autocomplete="off">
+      </div>
+      <div>
+        <label for="id_email" class="p-label">Email</label>
+        <input id="id_email" type="email" name="email" value="{{ member.email|default:'' }}" class="p-form-control p-select-mb">
+      </div>
+    </div>
+
+    <label for="id_phone" class="p-label">Phone</label>
+    <input id="id_phone" type="text" name="phone" value="{{ member.phone|default:'' }}" class="p-form-control p-select-mb">
+
+    <label for="id_notes" class="p-label">Notes</label>
+    <textarea id="id_notes" name="notes" rows="3" class="p-form-control p-select-mb">{{ member.notes|default:'' }}</textarea>
+
+    <div class="p-form-divider"></div>
+
+    <label for="id_password" class="p-label">
+      {% if member %}New Password <span class="p-muted">(leave blank to keep current)</span>{% else %}Password <span class="p-required">*</span>{% endif %}
+    </label>
+    <input id="id_password" type="password" name="password" class="p-form-control p-select-mb" autocomplete="new-password">
+
+    <label for="id_password_confirm" class="p-label">Confirm Password</label>
+    <input id="id_password_confirm" type="password" name="password_confirm" class="p-form-control p-select-mb" autocomplete="new-password">
+
+    <div class="p-form-divider"></div>
+
+    <div class="p-form-row p-form-row-checks">
+      <label class="p-check-label">
+        <input type="checkbox" name="is_superuser" {% if member.is_superuser %}checked{% endif %}>
+        Manager (superuser access)
+      </label>
+      <label class="p-check-label">
+        <input type="checkbox" name="is_active" {% if member.is_active or not member %}checked{% endif %}>
+        Active
+      </label>
+    </div>
+
+    <div class="p-form-actions">
+      <button type="submit" class="p-btn p-btn-primary">{% if member %}Save Changes{% else %}Create Account{% endif %}</button>
+      <a href="{% url 'portal:staff_list' %}" class="p-btn p-btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock content %}
