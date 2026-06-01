@@ -215,41 +215,7 @@
     </div>
     <div class="product-grid">
       {% for p in related_products %}
-      <div class="product-card">
-        <a href="{{ p.get_absolute_url }}" class="product-card-image-link">
-          <div class="product-card-image">
-            {% if p.image %}
-            <img src="{{ p.image.url }}" alt="{{ p.name }}" width="280" height="280">
-            {% else %}
-            <span class="product-no-image">{{ p.name }}</span>
-            {% endif %}
-          </div>
-        </a>
-        <div class="product-card-body">
-          {% if p.origin %}<div class="pc-brand">{{ p.origin }}</div>{% endif %}
-          <a href="{{ p.get_absolute_url }}" class="pc-title-link">
-            <h3 class="pc-title">{{ p.name }}</h3>
-          </a>
-          <div class="pc-price-row">
-            <span class="pc-price">${{ p.price }}</span>
-            {% if p.compare_price %}<span class="pc-compare">${{ p.compare_price }}</span>{% endif %}
-          </div>
-          {% if p.stock_available == 0 %}
-          <div class="pc-stock pc-out">Out of Stock</div>
-          {% elif p.is_low_stock %}
-          <div class="pc-stock pc-low">Only {{ p.stock_available }} left</div>
-          {% else %}
-          <div class="pc-stock pc-in">In Stock</div>
-          {% endif %}
-          <form method="post" action="{% url 'storefront:cart_add' %}" class="pc-cart-form">
-            {% csrf_token %}
-            <input type="hidden" name="variant_id" value="{{ p.default_variant_id }}">
-            <input type="hidden" name="quantity" value="1">
-            <input type="hidden" name="next" value="{% url 'storefront:cart' %}">
-            <button type="submit" class="pc-atc-btn" {% if p.stock_available == 0 %}disabled{% endif %}>Add to Cart</button>
-          </form>
-        </div>
-      </div>
+      {% include "storefront/includes/product_card.html" with product=p %}
       {% endfor %}
     </div>
   </div>
