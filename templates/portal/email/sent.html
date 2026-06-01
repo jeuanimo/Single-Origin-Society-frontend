@@ -1,44 +1,40 @@
 {% extends "portal/base.html" %}
-{% block title %}Inbox{% endblock title %}
+{% block title %}Sent Mail{% endblock title %}
 {% block content %}
 
 <div class="gm-wrap">
 
-  <!-- Toolbar -->
   <div class="gm-toolbar">
     <div class="gm-toolbar-left">
-      <a href="{% url 'portal:email_inbox' %}" class="gm-refresh-btn" title="Refresh">
-        <span>⟳</span>
-      </a>
+      <a href="{% url 'portal:email_sent' %}" class="gm-refresh-btn" title="Refresh"><span>⟳</span></a>
       <span class="gm-account">contact@single-origin-society.com</span>
     </div>
     <div class="gm-toolbar-right">
-      <a href="{% url 'portal:email_sent' %}" class="gm-back-btn">Sent</a>
+      <a href="{% url 'portal:email_inbox' %}" class="gm-back-btn">Inbox</a>
       <a href="{% url 'portal:email_draft_list' %}" class="gm-back-btn">Drafts</a>
       <a href="{% url 'portal:email_compose' %}" class="gm-reply-btn">✏ Compose</a>
-      <span class="gm-count">{{ emails|length }} messages</span>
+      <span class="gm-count">{{ emails|length }} sent</span>
     </div>
   </div>
 
   {% if error %}
   <div class="gm-error-bar">
-    <strong>Could not connect to mail server:</strong> {{ error }}
+    <strong>Could not load sent mail:</strong> {{ error }}
   </div>
   {% endif %}
 
-  <!-- Message list -->
   <div class="gm-list">
     {% for msg in emails %}
-    <a href="{% url 'portal:email_detail' msg.uid %}" class="gm-row {% if not msg.is_read %}gm-unread{% endif %}">
-      <div class="gm-star">{% if msg.is_important %}★{% elif not msg.is_read %}●{% else %}☆{% endif %}</div>
-      <div class="gm-sender">{{ msg.from|truncatechars:28 }}</div>
+    <a href="{% url 'portal:email_sent_detail' msg.uid %}" class="gm-row">
+      <div class="gm-star">✉</div>
+      <div class="gm-sender">{{ msg.to|truncatechars:28 }}</div>
       <div class="gm-subject-wrap">
         <span class="gm-subject">{{ msg.subject }}</span>
       </div>
       <div class="gm-date">{{ msg.date|truncatechars:12 }}</div>
     </a>
     {% empty %}
-    <div class="gm-empty">Your inbox is empty.</div>
+    <div class="gm-empty">No sent messages.</div>
     {% endfor %}
   </div>
 

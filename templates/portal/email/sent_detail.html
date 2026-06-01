@@ -1,0 +1,56 @@
+{% extends "portal/base.html" %}
+{% block title %}{% if message %}{{ message.subject }}{% else %}Sent Message{% endif %}{% endblock title %}
+{% block content %}
+
+<div class="gm-wrap">
+
+  <div class="gm-toolbar">
+    <div class="gm-toolbar-left">
+      <a href="{% url 'portal:email_sent' %}" class="gm-back-btn">← Sent</a>
+    </div>
+    <div class="gm-toolbar-right">
+      {% if message %}
+      <a href="{% url 'portal:email_compose' %}?to={{ message.to|urlencode }}&subject=Fwd: {{ message.subject|urlencode }}" class="gm-reply-btn">↪ Forward</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="gm-error-bar">
+    <strong>Error:</strong> {{ error }}
+  </div>
+  {% endif %}
+
+  {% if message %}
+  <div class="gm-detail-wrap">
+
+    <h2 class="gm-detail-subject">{{ message.subject }}</h2>
+
+    <div class="gm-detail-header">
+      <div class="gm-detail-avatar">✉</div>
+      <div class="gm-detail-meta">
+        <div class="gm-detail-from"><strong>To: {{ message.to }}</strong></div>
+        <div class="gm-detail-to-date">
+          {% if message.cc %}<span class="gm-detail-to">cc {{ message.cc }}</span>{% endif %}
+          <span class="gm-detail-date">{{ message.date }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gm-detail-body">
+      {% if message.is_html %}
+        <iframe title="Email message body" srcdoc="{{ message.body|escape }}" class="gm-iframe" sandbox="allow-same-origin"></iframe>
+      {% else %}
+        <pre class="gm-plain">{{ message.body }}</pre>
+      {% endif %}
+    </div>
+
+    <div class="gm-detail-actions">
+      <a href="{% url 'portal:email_compose' %}?to={{ message.to|urlencode }}&subject=Fwd: {{ message.subject|urlencode }}" class="gm-reply-btn">↪ Forward</a>
+    </div>
+
+  </div>
+  {% endif %}
+
+</div>
+{% endblock content %}

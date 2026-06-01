@@ -40,6 +40,8 @@ urlpatterns = [
     path("staff/", views.staff_list, name="staff_list"),
     # Email inbox
     path("email/", views.email_inbox, name="email_inbox"),
+    path("email/sent/", views.email_sent, name="email_sent"),
+    path("email/sent/<str:uid>/", views.email_sent_detail, name="email_sent_detail"),
     path("email/compose/", views.email_compose, name="email_compose"),
     path("email/drafts/", views.email_draft_list, name="email_draft_list"),
     path("email/drafts/<int:draft_pk>/edit/", views.email_compose, name="email_draft_edit"),

@@ -23,6 +23,8 @@ FLAGS_ADD = "+FLAGS"
 FLAGS_REMOVE = "-FLAGS"
 
 ORDER_SUBJECT_MARKER = "Order"
+FETCH_HEADER_FLAGS = "(RFC822.HEADER FLAGS)"
+NO_SUBJECT = "(no subject)"
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -111,7 +113,7 @@ def _is_order_email(subject):
 def _auto_flag_orders(conn, message_ids):
     """Flag any unflagged order notification emails."""
     for uid in message_ids:
-        _, msg_data = conn.fetch(uid, "(RFC822.HEADER FLAGS)")
+        _, msg_data = conn.fetch(uid, FETCH_HEADER_FLAGS)
         if not msg_data or not msg_data[0]:
             continue
         flags_str = msg_data[0][0].decode() if isinstance(msg_data[0][0], bytes) else str(msg_data[0][0])
@@ -122,6 +124,81 @@ def _auto_flag_orders(conn, message_ids):
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
+_SENT_FOLDER_CANDIDATES = ["Sent", "Sent Items", "Sent Messages", "[Gmail]/Sent Mail"]
+
+
+def _find_sent_folder(conn):
+    """Return the name of the sent folder, trying common variants."""
+    _, folders = conn.list()
+    folder_names = []
+    for f in folders:
+        if not f:
+            continue
+        parts = f.decode() if isinstance(f, bytes) else f
+        folder_names.append(parts.rsplit(" ", 1)[-1].strip('"'))
+    for candidate in _SENT_FOLDER_CANDIDATES:
+        if candidate in folder_names:
+            return candidate
+    # fallback: return the first candidate and let the caller handle the error
+    return _SENT_FOLDER_CANDIDATES[0]
+
+
+def fetch_sent(limit=50):
+    """Return a list of sent message summary dicts, newest first."""
+    conn = _connect()
+    try:
+        folder = _find_sent_folder(conn)
+        conn.select(f'"{folder}"')
+        _, data = conn.search(None, "ALL")
+        message_ids = data[0].split()
+        message_ids = message_ids[-limit:][::-1]
+
+        result = []
+        for uid in message_ids:
+            _, msg_data = conn.fetch(uid, FETCH_HEADER_FLAGS)
+            if not msg_data or not msg_data[0]:
+                continue
+            msg = email.message_from_bytes(msg_data[0][1])
+            result.append({
+                "uid": uid.decode(),
+                "subject": _decode_header(msg.get("Subject", NO_SUBJECT)),
+                "to": _decode_header(msg.get("To", "")),
+                "date": msg.get("Date", ""),
+            })
+        return result, folder
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to fetch sent mail: {e}") from e
+    finally:
+        _logout(conn)
+
+
+def fetch_sent_message(uid):
+    """Return a full parsed sent message dict for the given UID."""
+    conn = _connect()
+    try:
+        folder = _find_sent_folder(conn)
+        conn.select(f'"{folder}"', readonly=True)
+        _, msg_data = conn.fetch(uid.encode(), "(RFC822)")
+        if not msg_data or not msg_data[0]:
+            raise IMAPError("Message not found.")
+        msg = email.message_from_bytes(msg_data[0][1], policy=policy.default)
+        body, is_html = _get_body(msg)
+        return {
+            "uid": uid,
+            "subject": _decode_header(msg.get("Subject", NO_SUBJECT)),
+            "from": _decode_header(msg.get("From", "")),
+            "to": _decode_header(msg.get("To", "")),
+            "cc": _decode_header(msg.get("Cc", "")),
+            "date": msg.get("Date", ""),
+            "body": body,
+            "is_html": is_html,
+        }
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to fetch sent message: {e}") from e
+    finally:
+        _logout(conn)
+
 
 def fetch_inbox(limit=50):
     """Return a list of message summary dicts, newest first."""
@@ -136,14 +213,14 @@ def fetch_inbox(limit=50):
 
         result = []
         for uid in message_ids:
-            _, msg_data = conn.fetch(uid, "(RFC822.HEADER FLAGS)")
+            _, msg_data = conn.fetch(uid, FETCH_HEADER_FLAGS)
             if not msg_data or not msg_data[0]:
                 continue
             flags = msg_data[0][0].decode() if isinstance(msg_data[0][0], bytes) else str(msg_data[0][0])
             msg = email.message_from_bytes(msg_data[0][1])
             result.append({
                 "uid": uid.decode(),
-                "subject": _decode_header(msg.get("Subject", "(no subject)")),
+                "subject": _decode_header(msg.get("Subject", NO_SUBJECT)),
                 "from": _decode_header(msg.get("From", "")),
                 "date": msg.get("Date", ""),
                 "is_read": FLAG_SEEN in flags,
@@ -168,7 +245,7 @@ def fetch_message(uid):
         body, is_html = _get_body(msg)
         return {
             "uid": uid,
-            "subject": _decode_header(msg.get("Subject", "(no subject)")),
+            "subject": _decode_header(msg.get("Subject", NO_SUBJECT)),
             "from": _decode_header(msg.get("From", "")),
             "to": _decode_header(msg.get("To", "")),
             "date": msg.get("Date", ""),

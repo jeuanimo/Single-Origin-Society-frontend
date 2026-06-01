@@ -10,7 +10,10 @@ from django.urls import reverse, NoReverseMatch
 import csv
 
 from accounts.decorators import portal_required, manager_required
-from portal.imap_client import fetch_inbox, fetch_message, delete_message, mark_unread, toggle_important, IMAPError
+from portal.imap_client import (
+    fetch_inbox, fetch_message, fetch_sent, fetch_sent_message,
+    delete_message, mark_unread, toggle_important, IMAPError,
+)
 from portal.models import EmailDraft
 from accounts.models import User
 from portal.forms import InquiryAssignForm, InquiryFilterForm, InquiryNoteForm
@@ -534,6 +537,26 @@ def email_delete(request, uid):
 
 
 @portal_required
+def email_sent(request):
+    try:
+        emails, folder = fetch_sent(limit=50)
+        error = None
+    except IMAPError as e:
+        emails, folder, error = [], "", str(e)
+    return render(request, "portal/email/sent.html", {"emails": emails, "folder": folder, "error": error})
+
+
+@portal_required
+def email_sent_detail(request, uid):
+    try:
+        message = fetch_sent_message(uid)
+        error = None
+    except IMAPError as e:
+        message, error = None, str(e)
+    return render(request, "portal/email/sent_detail.html", {"message": message, "error": error})
+
+
+@portal_required
 def email_compose(request, draft_pk=None):
     draft = get_object_or_404(EmailDraft, pk=draft_pk, created_by=request.user) if draft_pk else None
 
@@ -582,7 +605,7 @@ def _save_draft(request, data, draft):
     else:
         draft = EmailDraft.objects.create(**data, created_by=request.user)
     messages.success(request, "Draft saved.")
-    return redirect("portal:email_draft_edit", pk=draft.pk)
+    return redirect("portal:email_draft_edit", draft_pk=draft.pk)
 
 
 @portal_required
