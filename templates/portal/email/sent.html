@@ -20,6 +20,9 @@
   {% if error %}
   <div class="gm-error-bar">
     <strong>Could not load sent mail:</strong> {{ error }}
+    {% if available_folders %}
+    <br><small>Available folders: {{ available_folders|join:", " }}</small>
+    {% endif %}
   </div>
   {% endif %}
 

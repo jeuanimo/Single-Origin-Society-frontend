@@ -12,7 +12,7 @@ import csv
 from accounts.decorators import portal_required, manager_required
 from portal.imap_client import (
     fetch_inbox, fetch_message, fetch_sent, fetch_sent_message,
-    delete_message, mark_unread, toggle_important, IMAPError,
+    fetch_folders, delete_message, mark_unread, toggle_important, IMAPError,
 )
 from portal.models import EmailDraft
 from accounts.models import User
@@ -541,9 +541,19 @@ def email_sent(request):
     try:
         emails, folder = fetch_sent(limit=50)
         error = None
+        available_folders = None
     except IMAPError as e:
         emails, folder, error = [], "", str(e)
-    return render(request, "portal/email/sent.html", {"emails": emails, "folder": folder, "error": error})
+        try:
+            available_folders = fetch_folders()
+        except IMAPError:
+            available_folders = None
+    return render(request, "portal/email/sent.html", {
+        "emails": emails,
+        "folder": folder,
+        "error": error,
+        "available_folders": available_folders,
+    })
 
 
 @portal_required

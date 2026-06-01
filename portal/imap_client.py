@@ -7,8 +7,11 @@ import imaplib
 import email
 import email.header
 import email.utils
+import logging
 from email import policy
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class IMAPError(Exception):
@@ -128,20 +131,61 @@ def _auto_flag_orders(conn, message_ids):
 _SENT_FOLDER_CANDIDATES = ["Sent", "Sent Items", "Sent Messages", "[Gmail]/Sent Mail"]
 
 
+def _parse_folder_name(raw):
+    """Extract folder name from an IMAP LIST response line."""
+    line = raw.decode() if isinstance(raw, bytes) else raw
+    # LIST response: (\Flags) "sep" folder-name  OR  (\Flags) NIL folder-name
+    # The folder name is everything after the last separator token
+    # Handle both quoted ("Sent Items") and unquoted (Sent) names
+    line = line.strip()
+    # strip flags section: (\...)
+    if line.startswith("("):
+        line = line[line.index(")") + 1:].strip()
+    # strip separator token (e.g. "/" or "." or NIL)
+    if line.startswith('"'):
+        line = line[line.index('"', 1) + 1:].strip()
+    elif line.upper().startswith("NIL"):
+        line = line[3:].strip()
+    else:
+        line = line.split(" ", 1)[-1].strip()
+    # remaining is the folder name, possibly quoted
+    return line.strip('"')
+
+
 def _find_sent_folder(conn):
     """Return the name of the sent folder, trying common variants."""
     _, folders = conn.list()
-    folder_names = []
-    for f in folders:
-        if not f:
-            continue
-        parts = f.decode() if isinstance(f, bytes) else f
-        folder_names.append(parts.rsplit(" ", 1)[-1].strip('"'))
+    folder_names = [_parse_folder_name(f) for f in folders if f]
+    logger.info("IMAP folders available: %s", folder_names)
+
+    # exact match first
     for candidate in _SENT_FOLDER_CANDIDATES:
         if candidate in folder_names:
+            logger.info("Using sent folder: %s", candidate)
             return candidate
-    # fallback: return the first candidate and let the caller handle the error
+
+    # case-insensitive fallback
+    lower_map = {n.lower(): n for n in folder_names}
+    for candidate in _SENT_FOLDER_CANDIDATES:
+        match = lower_map.get(candidate.lower())
+        if match:
+            logger.info("Using sent folder (case-insensitive match): %s", match)
+            return match
+
+    logger.warning("No sent folder found among: %s — falling back to 'Sent'", folder_names)
     return _SENT_FOLDER_CANDIDATES[0]
+
+
+def fetch_folders():
+    """Return the list of all IMAP folder names (for debugging)."""
+    conn = _connect()
+    try:
+        _, folders = conn.list()
+        return [_parse_folder_name(f) for f in folders if f]
+    except imaplib.IMAP4.error as e:
+        raise IMAPError(f"Failed to list folders: {e}") from e
+    finally:
+        _logout(conn)
 
 
 def fetch_sent(limit=50):
